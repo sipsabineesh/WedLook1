@@ -1,0 +1,44 @@
+
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<section>
+    <div class="container">
+        <div class="row mt-4">
+        </div>
+       
+
+        </div>
+        <section id="package" class="package section_padding">
+          <div class="container">
+             <div class="row">
+              <div class="section_title text-center">
+                <p>Select Your Occasion</p>
+             </div>
+<% for (var i=0; i < category.length;i++) {%>
+
+            <div class="col-lg-2 col-md-6 col-sm-12 py-15">
+               <a href="/user/view-products/<%= category[i]._id%>"><div class="package_box box" style=" position: relative;
+               display: block;
+               height: auto;
+               width: auto;">
+                 <div class="text">
+                  <img src="/img/product-images/<%= category[i].categoryImage[0]%>" style="width:  150px;
+                  height: 250px;
+                  object-fit: cover;">
+                  <!-- <img src="/img/pic10.jpg" style = "width:100%"> -->
+                     <h4 class="box_title mb-20"><%= category[i].categoryName%></h4>
+                    <p><%= category[i].categoryDescription%></p>
+                 </div>
+              </div></a>
+            </div>
+ <%}%>
+           </div>
+           </div>
+        </section>
+
+    </div>
+</section>
+ <!--include Footer-->
+ <%- include('../partial/_userFooter')%>
+ <!--include /Footer--> 

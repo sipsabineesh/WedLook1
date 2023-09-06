@@ -1,0 +1,15 @@
+<% for (var i=0; i < category.length;i++) {%>
+    <tr>
+        <td><%= i+1%></td>
+        <td><%= category[i].categoryName%></td>
+        <td><%= category[i].categoryDescription%></td>
+        <td>
+            <a href="" id="<%= category[i]._id%>" class="btn action-btn border-shadow update update-category">
+                <span class="text-gradient"><i class="fas fa-pencil-alt"></i></span>
+            </a>
+            <a class="btn action-btn border-shadow delete delete-category" data-id="<%= category[i]._id%>">
+                <span class="text-gradient"><i class="fas fa-times"></i></span>
+            </a>
+        </td>
+    </tr>
+<%}%>

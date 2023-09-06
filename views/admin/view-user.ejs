@@ -1,0 +1,39 @@
+<!--include Header-->
+    <%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+<!--Main Section-->
+<main id="site-main">
+    <div class="container">
+        <div class="box-nav d-flex-justify-between">
+            <a href="/add-user" class="border-shadow">
+                <span class="text-gradient">New User<i class="fa-solid fa-user"></i></span>
+            </a>
+        </div>
+        <!--Form Handling-->
+        <form id="product-list">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+              <!--include show-->
+                <%- include('../partial/_showUser')%>
+              <!--include /show-->
+              <tbody>
+            </table>
+        </form>
+
+        <!--/Form Handling-->
+
+    </div>
+</main>
+<!--/Main Section-->
+<!--include Footer-->
+    <%- include('../partial/_adminFooter')%>
+<!--include /Footer-->

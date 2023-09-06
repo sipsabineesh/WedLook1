@@ -1,0 +1,19 @@
+<% for (var i=0; i < user.length;i++) {%>
+    <tr>
+        <td><%= i+1%></td>
+        <td><%= user[i].name%></td>
+        <td><%= user[i].email%></td>
+        <td><%= user[i].phoneNumber%></td>
+        <td class="user-blocked-status"><input type="hidden" id="user-blocked-status-hidden" value="<%= user[i].blocked%>">
+            <% if(user[i].blocked === true) {%>
+                <a href=""  id="<%= user[i]._id%>"  class="btn action-btn border-shadow user-blocked">
+                    <span class="text-gradient"><i class="fa-solid fa-lock"></i></span>
+                </a>
+            <%} else {%>
+                <a  href=""  id="<%= user[i]._id%>"  class="btn action-btn border-shadow user-unblocked">
+                    <span class="text-gradient"><i class="fa-solid fa-lock-open"></i></span>
+                </a>
+            <% } %>
+        </td>
+    </tr>
+<%}%>

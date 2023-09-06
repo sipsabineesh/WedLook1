@@ -1,0 +1,66 @@
+  
+<!--include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header--> <script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
+</head>
+<body>
+    <div id="img-container" width="400px">
+        <img src="/img/banner4.png" />
+    <div>
+<script>
+var options = {
+    width: 400,
+    zoomWidth: 500,
+    offset: {vertical: 0, horizontal: 10}
+};
+new ImageZoom(document.getElementById("img-container"), options);
+ </script>
+  <section id="about" class="about section_padding pb-0">
+   <div class="container">
+    <div class="row align-items-center">
+		 	<div class="col-lg-12 section_title text-center">
+		 		
+			</div>
+			<div class="col-lg-6 col-md-6 col-sm-12">
+					 <div class="part_photo">
+					   <img class="img-fluid pb-100" src="/img/product-images/<%= product.productImage[0] %>">
+					 </div>
+			</div>
+		    <div class="col-lg-6 col-md-6 col-sm-12">
+		     <div class="part_text">
+		 	  <h4 class="mb-30"><%= product.productName %></h4>
+	    	  <p class="pb-35"><%= product.productDescription %></p>
+              <p class="pb-35">&#8377; <%= product.productPrice %></p>
+              <p class="pb-35">Stock:<%= product.productStock %></p>
+              <!-- <div class="info mt-35">
+			    <ul>
+				
+				 <li>
+				  <span class="title"><strong>Name:</strong></span>
+				  <span class="value"><strong>SB</strong></span>
+				 </li>
+				
+				 <li>
+				  <span class="title"><strong>Name:</strong></span>
+				  <span class="value"><strong>SB</strong></span>
+				 </li>
+				
+				 <li>
+				  <span class="title"><strong>Name:</strong></span>
+				  <span class="value"><strong>SB</strong></span>
+				 </li>
+				
+				 <li>
+				  <span class="title"><strong>Name:</strong></span>
+				  <span class="value"><strong>SB</strong></span>
+				 </li>
+				
+				</ul>
+			  </div> -->
+			  <a href="#" class="btns mr-2">Add to Cart</a>
+			  <a href="#" class="btns">Buy Now</a>
+	       </div>
+	      </div>
+      </div>
+   </div>
+  </section>

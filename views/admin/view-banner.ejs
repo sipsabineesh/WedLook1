@@ -1,0 +1,37 @@
+<!--include Header-->
+<%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+<!--Main Section-->
+<main id="site-main">
+    <div class="container">
+        <div class="box-nav d-flex-justify-between">
+            <a href="/admin/add-banner" class="border-shadow">
+                <span class="text-gradient">New Banner<i class=""></i></span>
+            </a>
+        </div>
+        <!--Form Handling-->
+        <form id="product-list">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Link</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--include show-->
+                      <%- include('../partial/_showBanner')%>
+                    <!--include /show-->
+                    <tbody>
+                  </table>
+              </form>
+              <!--/Form Handling-->
+          </div>
+      </main>
+      <!--/Main Section-->
+      <!--include Footer-->
+          <%- include('../partial/_adminFooter')%>
+      <!--include /Footer--> 
