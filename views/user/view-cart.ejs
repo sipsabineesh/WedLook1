@@ -1,0 +1,202 @@
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .section-border {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item img {
+            max-width: 100px;
+            height: auto;
+        }
+
+        .cart-item-details {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        .cart-item-title {
+            font-weight: bold;
+            color: #000;
+            text-transform: capitalize;
+        }
+
+        .cart-item-price,.cart-item-description {
+            color: #666262;
+        }
+
+        .cart-total {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .cart-total span {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .checkout-btn {
+            display: block;
+            margin-top: 20px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .checkout-btn:hover {
+            background-color: #000;
+        }
+
+        
+        /* Quantity control styles */
+        .quantity-control {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-control button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .quantity-control button:hover {
+            background-color: #fff;
+            border-style: 2px solid #000;
+            color: #000;
+            
+        }
+
+        .quantity-control input {
+            width: 40px;
+            text-align: center;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span style="text-indent: 20px;">Cart</span></h1>
+        <hr>
+        <div class="section-border">
+            <!-- <div class="cart-item">
+                <img src="/img/green.jpg" alt="Product 1">
+                <div class="cart-item-details">
+                    <h2 class="cart-item-title">Product 1</h2>
+                    <p>Price: <span class="cart-item-price">$19.99</span></p>
+                    <p>Quantity: 2</p>
+                </div>
+            </div> -->
+            <% for (var i=0; i < cartDetails.length;i++) {%>
+            <div class="cart-item">
+                <img src="/img/product-images/<%= cartDetails[i].productImage %>">
+                <div class="cart-item-details">
+                    <h4 class="cart-item-title"><%= cartDetails[i].productName %></h4>
+                    <p class="cart-item-price">Price: <span>&#8377;<%= cartDetails[i].productPrice %></span></p>
+                    <p class="cart-item-description"><span><%= cartDetails[i].productDescription %></span></p>
+                    <div class="quantity-control">
+                        <button class="decrement-quantity" onclick="decrementQuantity('<%= cartDetails[i]._id %>')">-</button>
+                        <input type="number" id="<%= cartDetails[i]._id %>" class="cart-quantity" name="quantity1" min="1" value="<%= cartDetails[i].quantity %>">
+                        <button class="increment-quantity" onclick="incrementQuantity('<%= cartDetails[i]._id %>')">+</button>
+                    </div>
+                </div>
+                <div class="remove-product"><a href="/remove-cart-product/<%= cartDetails[i]._id %>"><div class="btns">Remove</div></a></div>
+
+            </div>
+            <%}%>
+            <div class="cart-total">
+                Total: <span id="cart-total-price"><%= totalPrice%></span>
+            </div>
+            <a href="#"><div class="btns">Checkout</div></a>
+        </div>
+    </div>
+</body>
+
+<script>
+    // Get the quantity input elements
+    const quantityInputs = document.querySelectorAll('input[type="number"]');
+
+    // // Update the total price when the quantity changes
+    // quantityInputs.forEach(input => {
+    //     input.addEventListener('input', updateTotalPrice);
+    // });
+
+    // Increment quantity function 
+    function incrementQuantity(prodId) {
+        const inputElement = document.getElementById(prodId);
+        const currentValue = parseInt(inputElement.value);
+        inputElement.value = currentValue + 1;
+        $.ajax({
+    url:`http://localhost:3000/increment-cart-quantity/${prodId}`,
+    method: 'POST',
+    success: (response) => {
+        document.getElementById('cart-total-price').innerHTML = `${response.TotalPrice}`;
+       
+    }})
+    }
+
+    // Decrement quantity function (unchanged)
+    function decrementQuantity(prodId) {
+        const inputElement = document.getElementById(prodId);
+        const currentValue = parseInt(inputElement.value);
+        if (currentValue > 1) {
+            inputElement.value = currentValue - 1;
+            $.ajax({
+    url:`http://localhost:3000/decrement-cart-quantity/${prodId}`,
+    method: 'POST',
+    success: (response) => {
+        document.getElementById('cart-total-price').innerHTML = `${response.TotalPrice}`;
+       
+    }})
+        }
+    }
+
+    // // Function to update the total price (unchanged)
+    // function updateTotalPrice() {
+    //     const product1Price = 19.99;
+    //     const product2Price = 24.99;
+
+    //     const quantity1 = parseInt(document.getElementById('quantity1').value);
+    //     const quantity2 = parseInt(document.getElementById('quantity2').value);
+
+    //     const totalPrice = (product1Price * quantity1) + (product2Price * quantity2);
+
+    //     document.getElementById('totalPrice').textContent = `$${totalPrice.toFixed(2)}`;
+    // }
+
+    // // Initial calculation (unchanged)
+    // updateTotalPrice();
+</script>
+<!-- include Header-->
+<%- include('../partial/_userFooter')%>
+<!--include /Header -->

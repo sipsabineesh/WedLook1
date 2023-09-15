@@ -4,17 +4,10 @@
 <!--include /Header--> <script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
 </head>
 <body>
-    <div id="img-container" width="400px">
+    <!-- <div id="img-container" width="400px">
         <img src="/img/banner4.png" />
-    <div>
-<script>
-var options = {
-    width: 400,
-    zoomWidth: 500,
-    offset: {vertical: 0, horizontal: 10}
-};
-new ImageZoom(document.getElementById("img-container"), options);
- </script>
+    <div> -->
+
   <section id="about" class="about section_padding pb-0">
    <div class="container">
     <div class="row align-items-center">
@@ -22,7 +15,7 @@ new ImageZoom(document.getElementById("img-container"), options);
 		 		
 			</div>
 			<div class="col-lg-6 col-md-6 col-sm-12">
-					 <div class="part_photo">
+					 <div id="img-container"  class="part_photo ">
 					   <img class="img-fluid pb-100" src="/img/product-images/<%= product.productImage[0] %>">
 					 </div>
 			</div>
@@ -32,35 +25,29 @@ new ImageZoom(document.getElementById("img-container"), options);
 	    	  <p class="pb-35"><%= product.productDescription %></p>
               <p class="pb-35">&#8377; <%= product.productPrice %></p>
               <p class="pb-35">Stock:<%= product.productStock %></p>
-              <!-- <div class="info mt-35">
-			    <ul>
-				
-				 <li>
-				  <span class="title"><strong>Name:</strong></span>
-				  <span class="value"><strong>SB</strong></span>
-				 </li>
-				
-				 <li>
-				  <span class="title"><strong>Name:</strong></span>
-				  <span class="value"><strong>SB</strong></span>
-				 </li>
-				
-				 <li>
-				  <span class="title"><strong>Name:</strong></span>
-				  <span class="value"><strong>SB</strong></span>
-				 </li>
-				
-				 <li>
-				  <span class="title"><strong>Name:</strong></span>
-				  <span class="value"><strong>SB</strong></span>
-				 </li>
-				
-				</ul>
-			  </div> -->
-			  <a href="#" class="btns mr-2">Add to Cart</a>
+              <!-- <!DOCTYPE html> -->
+<!-- <html>
+<head>
+  <title>Image Zoom</title>
+</head>
+<body>
+  <h1>Zoomed Image</h1>
+  <img id="zoomed" src="/zoom?width=400&height=400" alt="Zoomed Image">
+</body>
+</html> -->
+
+			 <a href="#" id="<%= product[i]._id%>" class="add-to-item" onclick="addCart('<%= product._id%>')"><center><div class="btns">Add to cart</div></center></a>
 			  <a href="#" class="btns">Buy Now</a>
 	       </div>
 	      </div>
       </div>
    </div>
   </section>
+  <script>
+	var options = {
+		width: 400,
+		zoomWidth: 500,
+		offset: {vertical: 0, horizontal: 5}
+	};
+	new ImageZoom(document.getElementById("img-container"), options);
+	 </script>

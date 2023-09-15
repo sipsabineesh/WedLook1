@@ -139,6 +139,8 @@ exports.update=(req,res) => {
     //  const images = req.files.map(file => productImage.filename);
     //  const updatedImages = images.length > 0 ? images : productData.images; 
     //  req.body.productImage = updatedImages
+   // const images = req.files.map((file) => `img/productImages/${file.filename}`);
+
     const images = req.files.map(file => file.filename);
     req.body.productImage = images
      Product.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
@@ -203,7 +205,7 @@ exports.loadCategories=async (req,res) => {
   
 // } 
 
-exports.loadProductDetails = async(req,res) => { console.log(req.params.id)
+exports.loadProductDetails = async(req,res) => { 
     if(req.params.id){
         const id = req.params.id
        
@@ -213,7 +215,6 @@ exports.loadProductDetails = async(req,res) => { console.log(req.params.id)
                     res.status(404).send({message:'Not found user with id:'.id})
                 }
                 else{
-                    console.log(product)
                     let user = req.session.user
                     if(req.session.loggedIn){
                         res.render('user/view-product-details',{product,user})

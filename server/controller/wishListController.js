@@ -1,37 +1,50 @@
 var User = require('../model/userModel')
+var Product = require('../model/productModel')
 const { ObjectId } = require("mongodb");
+
 
 exports.loadWishList = async (req,res) => {
     if(req.session.loggedIn) {
     const user = req.session.user
+    const userId = user._id
+    console.log("  userId   "+userId)
     try {
       return new Promise((resolve, reject) => {
-        User.aggregate([
-          {
-            $match: {
-              _id: new ObjectId(user._id),
-            },
+       User.aggregate([
+        {
+          $match: {
+            _id: new ObjectId(userId),
+            wishlist: { $exists: true, $ne: [] }, 
           },
-          {
-            $unwind: "$wishlist",
+        },
+        {
+          $unwind: '$wishlist',
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'wishlist.productId',
+            foreignField: '_id',
+            as: 'productDetails',
           },
-          {
-            $project: {
-              productId: "$wishlist.productId",
-              addedDate: "$wishlist.addedDate",
-            },
+        },
+        {
+          $unwind: '$productDetails',
+        },
+        {
+          $project: {
+            _id: '$productDetails._id',
+            productName: '$productDetails.productName',
+            productCategory: '$productDetails.productCategory',
+            productPrice: '$productDetails.productPrice',
+            productStock: '$productDetails.productStock',
+            productDescription: '$productDetails.productDescription',
+            productImage: '$productDetails.productImage',
+            addedDate: '$wishlist.addedDate',
           },
-          {
-            $lookup: {
-              from: "product",
-              localField: "_id",
-              foreignField: "wishlist.productId",
-              as: "wishlisted",
-            },
-          },
-          
+        },
+ 
         ]).then((wishlisted) => {
-          console.log("productsssssss     :")
           console.log(wishlisted)
          // res.send(wishListed);
        
@@ -48,7 +61,7 @@ exports.loadWishList = async (req,res) => {
     }
   
    }
-
+  
 exports.addToWishList = (req,res) => { 
     const id = req.params.id
    var updateData = {
@@ -59,26 +72,33 @@ exports.addToWishList = (req,res) => {
              }
     }
  const user = req.session.user
-
-User.findByIdAndUpdate(user._id,updateData,{useFindAndModify:false})
-// User.updateOne({ _id:  new ObjectId(user._id)},
-// {
-//     $push: {
-//         wishlist: {
-//          productId: id
-//         }
-//     }
-// }
-// )
-.then(data =>{
-   if(!data){
-       res.status(404).send({message:`Cannot update  with ${id}.May be user not found`})
-   }
-   else{
-       res.send(data)
-   }
+ User.findOne({
+  _id: user._id,
+  'wishlist.productId': new ObjectId(id)
 })
-.catch(err =>{
-   res.status(500).send({message:"Error Update userinformation"})
+.then((productExists) => {
+  console.log(productExists)
+ // res.send(wishListed);
+
+
+ console.log("PRODUCT EXISTS OR NOT")
+ console.log(productExists)
+ if(!productExists){
+  User.findByIdAndUpdate(user._id,updateData,{useFindAndModify:false})
+    .then(data =>{
+     if(!data){
+         res.status(404).send({message:`Cannot update  with ${id}.May be user not found`})
+     }
+     else{
+         res.send(true)
+     }
+  })
+  .catch(err =>{
+     res.status(500).send({message:"Error Update userinformation"})
+  })
+ }
+else {
+   res.send(false)
+ }
 })
 }

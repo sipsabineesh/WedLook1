@@ -1,6 +1,6 @@
 
 var Banner = require('../model/bannerModel')
-
+var bannerHelper = require('../helper/bannerHelper')
 
 exports.create=(req,res) => {
     //validate request
@@ -42,13 +42,17 @@ exports.create=(req,res) => {
   })
   }
 
-  exports.loadBanners=async (req,res) => {
-    Banner.find({isActive:true})
-    .then(banner => {
-        const user = req.session.user
-      res.render('user/home',{banner,user})
-})
-    .catch(err => {
-      res.status(500).send({message:err.message||"Error occured while retrieving data"})
-})
+  exports.loadBanners=async (req,res) => { 
+   const user = req.session.user
+    try{
+        bannerHelper.getBanner().then((response)=> {
+            res.render('user/home',{user,banner:response})
+
+        })
+        
+    }
+    catch(error){
+        console.log(error);
+    }
+  
 }

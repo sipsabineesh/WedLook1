@@ -3,8 +3,9 @@ const bcrypt = require('bcryptjs')
 const { validationResult, matchedData } = require('express-validator');
 const nodemailer = require('nodemailer');
 const { userHomeRoutes } = require('../services/render');
-
-//const sendEmail = require('../../utils/sendEmail')
+const bannerHelper = require('../helper/bannerHelper')
+const jwt = require('jsonwebtoken');
+const secret = process.env.JWT_SECRET;
 
 //create and save new user
 exports.create=(req,res) => { 
@@ -13,11 +14,9 @@ exports.create=(req,res) => {
     // if(!errors.isEmpty()){
     //   var errMsg= errors.mapped();
     //   var inputData = matchedData(req);  
-
     //  }else{
     //     var inputData = matchedData(req);  
     //    // insert query will be written here
-       
     //new user
     const user = new User({
         name:req.body.name,
@@ -35,6 +34,8 @@ exports.create=(req,res) => {
     .then(data =>{
         // res.send(data)
         //next()
+       // const token = jwt.sign({ username: user.username }, secret);
+       // res.json({ token });
         errMsg =""
         res.render('user/login',{"errMsg":errMsg})
     })
@@ -91,7 +92,11 @@ exports.update=(req,res) => {
          res.status(500).send({message:"Could not delete user with id:"+id})
       })
    }
-   
+   //middleware 
+ 
+
+
+
    exports.login=(async(req,res) => {
    var errMsg="";
    try {
@@ -109,7 +114,15 @@ exports.update=(req,res) => {
                     }else{ 
                        req.session.loggedIn = true
                        req.session.user = user
-                       res.redirect('/user/home')
+                       let resp = {
+                        email:user.email,
+                        password: user.password
+                       }
+                       let token = jwt.sign(resp,process.env.JWT_SECRET,{expiresIn:360})
+                       res.cookie.jwt=token
+                       console.log("RES.COOKIE:    ")
+                       console.log(res.cookie)
+                       res.redirect('/home')
                    }
                } else {
                errMsg = "Incorrect password"
@@ -284,13 +297,16 @@ exports.updateOTP=(async(req,res) => {
     const user = await User.findOne({ loginOtp: req.body.otp })
     .then(user => {
         if(!user){
-            res.status(404).send({message:`Data to update cannot be empty`})
+            res.status(404).send({message:`Error Retreving Data`})
         }
          else{
-            try {
-                res.render('user/home',{user})
-            } catch (error) {
-                
+            try{
+                bannerHelper.getBanner().then((response)=> {
+                res.render('user/home',{user,banner:response})
+                })
+            }
+            catch(error){
+                console.log(error);
             }
         }
 
@@ -314,7 +330,7 @@ exports.updateOTP=(async(req,res) => {
                     res.status(404).send({message:'Not found user with id:'.id})
                 }
                 else{
-                    res.render('user/update-user',{user})
+                    res.render('update-user',{user})
                 }
               })
               .catch(err => {

@@ -6,12 +6,18 @@
         <td>
              <img src="/img/banner-images/<%= banner[i].bannerImage[0]%>" width="50px" height="50px"></td>
        <td>
-            <a href="" id="<%= banner[i]._id%>" class="btn action-btn border-shadow update update-banner">
-                <span class="text-gradient"><i class="fas fa-pencil-alt"></i></span>
-            </a>
-            <a class="btn action-btn border-shadow delete delete-banner" data-id="<%= banner[i]._id%>">
+            <!-- <a class="btn action-btn border-shadow delete delete-banner" data-id="<%= banner[i]._id%>">
                 <span class="text-gradient"><i class="fas fa-times"></i></span>
-            </a>
+            </a> -->
+            <% if(banner[i].isActive === true) {%>
+                <a  href=""  id="<%= banner[i]._id%>"  class="btn action-btn border-shadow user-unblocked">
+                    <span class="text-gradient"><i class="fa-solid fa-lock-open"></i></span>
+                </a>
+            <%} else {%>
+                <a href=""  id="<%= banner[i]._id%>"  class="btn action-btn border-shadow user-blocked">
+                    <span class="text-gradient"><i class="fa-solid fa-lock"></i></span>
+                </a>
+            <% } %>
         </td>
     </tr>
 <%}%>

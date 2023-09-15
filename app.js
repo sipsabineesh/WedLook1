@@ -35,9 +35,17 @@ app.use(session({
 	resave: true,
 	saveUninitialized: true
 }));
+
+app.use((req, res, next) => {
+	res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate');
+	res.header('Expires', '0');
+	res.header('Pragma', 'no-cache');
+	next();
+  });
+  
 // load routers
 app.use('/admin',require ('./server/routes/adminRouter'))
-app.use('/user',require ('./server/routes/userRouter'))
+app.use('/',require ('./server/routes/userRouter'))
 
 
 app.listen(PORT,() => {

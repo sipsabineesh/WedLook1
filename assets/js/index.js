@@ -51,9 +51,9 @@ $('#forgot-password').click(function(event){
     else{
            $.ajax({
             method: "POST",
-            url: `http://localhost:3000/user/forgot-password/${email}`,
+            url: `http://localhost:3000/forgot-password/${email}`,
             success: function(response){ 
-                window.location ="http://localhost:3000/user/forgot-password?userEmail="+response.email;
+                window.location ="http://localhost:3000/forgot-password?userEmail="+response.email;
             },
             error: function(request,status,errorThrown) {
                 $('#errMsg').text("Email not registered!Please Signup")
@@ -81,13 +81,13 @@ $('#reset-password').submit(function(event){
     var email = $('input[name="emailHidden"]').val();
     var pswd = $('input[name="password"]').val();
     var  request = {
-         "url":`http://localhost:3000/user/change-password/${email}/${pswd}`, 
+         "url":`http://localhost:3000/change-password/${email}/${pswd}`, 
          "method":'POST'
        }
  
      $.ajax(request).done(function(response){
          alert("Password Updated Successfully")
-         window.location = "http://localhost:3000/user/login"
+         window.location = "http://localhost:3000/login"
      })
  })
 
@@ -207,40 +207,37 @@ $('#reset-password').submit(function(event){
  $('.product-card').click(function(event){
   var id = $(this).attr( "id" )
   var  request = {
-      "url":`http://localhost:3000/user/view-product-details/${id}`,
+      "url":`http://localhost:3000/view-product-details/${id}`,
       "method":'GET'
     }     
       $.ajax(request).done(function(response){
-       window.location =`http://localhost:3000/user/view-product-details/${id}`
+       window.location =`http://localhost:3000/view-product-details/${id}`
        })
 })
  
-function addCart(proId){
-    // $.ajax({
-             // url:`http://localhost:3000/user/add-to-cart/${prodId}`,
-             // method: 'POST',
-             // success: (response) => {
-                 alert("added to cart"+ proId)
-             // } 
-           var url = `http://localhost:3000/user/add-to-cart/${proId}`
-           var  request = {
-              "url":`http://localhost:3000/user/add-to-cart/${proId}`,
-              "method":'POST'
-        }
- 
-      $.ajax(request).done(function(response){
-          alert(response+"Data Updated Successfully")
-      })
- 
- 
- 
-  //      var cart = document.getElementById("toast-cart");
-  //  cart.classList.add("show");
-  //  cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Product added to cart';
-  //  setTimeout(function(){
-  //    cart.classList.remove("show");
-  //  }, 3000);
- }
+$('.add-to-item').click(function(event){ 
+  var prodId = $(this).attr( "id" )
+  // $(this).hide()
+  
+   $.ajax({
+    url:`http://localhost:3000/add-to-cart/${prodId}`,
+    method: 'POST',
+    success: (response) => {
+       var cart = document.getElementById("toast-cart");
+       cart.classList.add("show");
+       if(response === true)
+         cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Product added to cart';
+       else
+         cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Quantity Incremented';
+       setTimeout(function(){
+       cart.classList.remove("show");
+   }, 3000);
+  
+    }
+   }) 
+   
+})
+
  function wishList(proId){
   //var heart = $("#heart_"+proId);
   var heart = document.getElementById("heart_"+proId);
@@ -251,31 +248,25 @@ function addCart(proId){
   //  else{
   //  heart.classList.add("heart-active");
   // }
-  //var url = `http://localhost:3000/user/add-to-wishlist/${proId}`
+  //var url = `http://localhost:3000/add-to-wishlist/${proId}`
 
   var  request = {
-    "url":`http://localhost:3000/user/add-to-wishlist/${proId}`,
+    "url":`http://localhost:3000/add-to-wishlist/${proId}`,
     "method":'PUT'
   }
 
 $.ajax(request).done(function(response){
+  
      var list = document.getElementById("toast");
     list.classList.add("show");
-    list.innerHTML = '<i class="far fa-heart wish"></i> Product added to List';
+    if(response === true)
+      list.innerHTML = '<i class="far fa-heart wish"></i> Product added to List';
+    else
+    list.innerHTML = '<i class="far fa-heart wish"></i> "Already added"';
+
     setTimeout(function(){
       list.classList.remove("show");
     },3000);
-   // alert("Data Updated Successfully")
-})
-
-
-
-    //   var list = document.getElementById("toast");
-    // list.classList.add("show");
-    // list.innerHTML = '<i class="far fa-heart wish"></i> Product added to List';
-    // setTimeout(function(){
-    //   list.classList.remove("show");
-    // },3000);
-  
-  }
+ })
+}
  

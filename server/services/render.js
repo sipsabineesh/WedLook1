@@ -1,5 +1,5 @@
 const axios = require('axios')
-
+const bannerController = require('../controller/bannerController')
 //user part
 
 exports.userSignupRoutes = (req,res) => {
@@ -12,7 +12,8 @@ exports.userLoginRoutes = (req,res) => {
        res.render('user/login',{"errMsg":""})
     }
     else{
-        res.render('user/home',{user})
+        const banner = bannerController.loadBanners
+       // res.render('user/home',{banner,user})
     }
 }
 
@@ -31,7 +32,19 @@ exports.userOTPLoginRoutes = (req,res) => {
 exports.userHomeRoutes = (req,res) => {
     let user = req.session.user
     if(req.session.loggedIn){
-        res.render('user/home',{user})
+        res.redirect('/home')
+    }
+    else{
+        res.render('user/login',{"errMsg":"Please Login"})
+    }
+}
+
+exports.viewCartsRoutes = (req,res) => {
+    let user = req.session.user
+    console.log(user)
+
+    if(req.session.loggedIn){
+        res.render('user/view-cart',{user})
     }
     else{
         res.render('user/login',{"errMsg":"Please Login"})
@@ -62,7 +75,7 @@ exports.viewProductDetailsRoutes = (req,res) => {
 exports.userLogoutRoutes = (req,res) => {
 	req.session.loggedIn=false;
 	req.session.destroy()
-	res.redirect('/user/login');
+	res.redirect('/login');
   }
 
 //admin part

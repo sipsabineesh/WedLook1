@@ -55,7 +55,7 @@ h1{
 }
 
 .heart:hover{
-  color: red;
+  color:#C50707;
   background-color: #f9f9f9;
   -webkit-transition: all 1s ease;
   -moz-transition: all 1s ease;
@@ -111,6 +111,7 @@ h1{
   color: #C50707;
 }
 
+ 
 #toast, #toast-cart{
   padding: 10px;
   padding-left: 5px;
@@ -160,7 +161,7 @@ h1{
       <span id="heart_<%= product[i]._id%>" class="heart"><i onclick="wishList('<%= product[i]._id%>')" class="fas fa-heart"></i></span>
   <img src="/img/product-images/<%= product[i].productImage[0]%>" id="<%= product[i]._id%>" class="first-image  product-card" style="width:100%; height:300px;">
   <div class="card-body">
-    <a href="#" onclick="addCart('<%= product[i]._id%>')"><center>Add to cart</center></a>
+    <a href="#" id="<%= product[i]._id%>" class="add-to-item" onclick="addCart('<%= product[i]._id%>')"><center><div class="btns">Add to cart</div></center></a>
     <hr>
     <center>
       <h5 class="card-title"><%= product[i].productName%></h5>
