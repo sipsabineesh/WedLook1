@@ -1,0 +1,134 @@
+<!--include Header-->
+<%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+
+<!--Main Section-->
+<main id="site-main">
+<div id="toast"></div>
+<div id="toast-cart"></div>
+    <div class="container">
+        <div class="box-nav d-flex-justify-between">
+            <a href="/admin/add-coupon" class="border-shadow">
+                <span class="text-gradient">New Coupon<i class=""></i></span>
+            </a>
+        </div>
+        <div class="row align-items-center">
+          <!-- Limit Selection Dropdown Column -->
+          <div class="col-md-3">
+              <div class="form-group">
+                <form action="/admin/coupon-list" method="get">
+                <label for="limitSelect">Items per page:</label>
+                <select class="form-control" id="limitSelect" name="limit" onchange="this.form.submit()">
+                  <option value="5" <%= selectedLimit === 5 ? 'selected' : '' %>>5</option>
+                  <option value="10" <%= selectedLimit === 10 ? 'selected' : '' %>>10</option>
+                  <option value="20" <%= selectedLimit === 20 ? 'selected' : '' %>>20</option>
+                </select>
+                </form>
+              </div>
+            </div>
+          
+            <!-- Pagination Column -->
+            <div class="col-md-6">
+              <div class="pagination-container">
+                <ul class="pagination">
+                    <% if (currentPage > 1) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                    <% } %>
+                
+                    <% for (let i = 1; i <= pages; i++) { %>
+                      <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&limit=<%= selectedLimit %>"><%= i %></a>
+                      </li>
+                    <% } %>
+                
+                    <% if (currentPage < pages) { %>
+                      <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    <% } %>
+                  </ul>
+              </div>
+            </div>
+          </div>
+        <!--Form Handling-->
+        <form id="coupon-list">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                      <th>No:</th>
+                      <th>Coupon Code</th>
+                      <th>Min Purchase Amount</th>
+                      <th>Discount %</th>
+                      <th>Max Discount Amount</th>
+                      <th>Expiry Date</th>
+                      <th class="text-end"> Action </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% couponList.forEach(function(item,index) { %>
+    
+                    <tr>
+                      <td><%=index + 1%></td>
+                      <td><%=item.couponCode%></td>
+                      <td><%=item.minPurchase%></td>
+                      <td><%=item.minDiscountPercentage%>%</td>
+                      <td>₹<%=item.maxDiscountValue%></td>
+                      <td><%= new Date(item.validity).toDateString()%></td>
+                      <td class="text-end">
+                        <button class="btns btn-sm" onclick="removeCoupon('<%=item._id%>')">Remove</button>
+                      </td>
+                    </tr>
+    
+                    <% }); %>
+                    <tbody>
+                  </table>
+              </form>
+              <!--/Form Handling-->
+          </div>
+      </main>
+      <!--/Main Section-->
+
+ <!--include Footer-->
+ <%- include('../partial/_adminFooter')%>
+ <!--include /Footer--> 
+
+<script>
+    //to remove the Coupon
+   function removeCoupon(couponId){
+    $.ajax({
+      url : '/admin/remove-coupon',
+      method : 'delete',
+      data : {
+        couponId : couponId
+      },
+      success:(successResponse)=>{
+        location.reload()
+      }
+    })
+   }
+  </script>
+  <script>
+    function removeCoupon(couponId){
+  $.ajax({
+    url : '/admin/removeCoupon',
+    method : 'delete',
+    data : {
+      couponId : couponId
+    },
+    success: (response) => {
+            if (response.status) {
+              location.reload()
+            }
+          }
+    
+    
+  })
+  
+ }
+  </script>

@@ -1,0 +1,132 @@
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<style>
+ .section-border {
+            max-width: 1200px;
+            min-height: 70vh;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        li{
+            list-style-type: none;
+        }
+</style>
+
+
+<div class="container">
+    <h3><span style="text-indent: 20px;">Your Account Details</span></h3>
+    <hr>
+    <div class="d-flex justify-content-between align-items-center py-3">
+        <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> </h2>
+      </div>
+    <h3><span style="text-indent: 20px;">Your Account Details</span></h3>
+    <hr>
+
+		<div id="toast"></div>
+		<div id="toast-order"></div>
+        <div class="section-border">
+            <div class="row">
+                <div class="col-md-12 mt-5">
+                    <center>
+                        <strong><span></span>
+                        <%=user.name%></strong>
+                        <br>
+                        <span><i class="fa fa-envelope" aria-hidden="true"></i>
+                        </span>
+                        <%=user.email%>
+                        <span><i class="fa fa-phone" aria-hidden="true"></i></span>
+                        <%=user.phoneNumber%>
+                        <span><a onclick="openPopup()"><i class="fas fa-user-edit"></i></a></span>
+                    </center>
+                  </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9 ml-5 mt-5 mb-5">
+                        <div class="d-flex flex-wrap">
+                            <% addresses.forEach((address, index) => { %>
+                                <div class="address-card p-2">
+                                    <i class="fas fa-map-marker-alt mr-2"></i> <!-- Font Awesome icon -->
+                                    <strong><%= address.addresses.name %></strong>,
+                                    <%= address.addresses.address %> , <%= address.addresses.locality %> ,
+                                    <%= address.addresses.city %>,  <%= address.addresses.state %>,
+                                    <%= address.addresses.pincode %>, <%= address.addresses.mobileNumber %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+                              
+                <div class="container">
+                  <div class="row">
+                      <div class="col-md-3 col-sm-6 ml-5 mt-5 mb-5">
+                          <a href="/view-orders" class="btns">Your Orders</a>
+                      </div>
+                      <div class="col-md-3 col-sm-6 ml-5 mt-5 mb-5">
+                          <a href="/addresses" class="btns">Your Address</a>
+                      </div>
+                      <div class="col-md-3 col-sm-6 ml-5 mt-5 mb-5">
+                        <a href="/wallet" class="btns">Your Wallet Transactions</a>
+                    </div>
+                  </div>
+                </div>  
+        </div>
+ </div>
+ 
+
+ 
+<!--include Footer-->
+<%- include('../partial/_userFooter')%>
+<!--include /Footer-->
+  <!-- popup -->
+
+  <div id="popupe" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: #fff; border: 1px solid #ccc; padding: 20px; z-index: 9999; display: none;">
+    <button onclick="closePopup()" style="position: absolute; top: 10px; right: 10px; background-color: transparent; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+    <form  method="post" action="/edit-info">
+        <div class="form-group row  mt-3">
+            <label for="productStock" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-md-12">
+              <input type="text"  class="form-control" id="name" name="name" value=" <%=user.name%>">
+            </div>
+            <label for="productPrice" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-md-12">
+              <div class="form-group">
+                <input type="text"  class="form-control" id="email" name="email" value=" <%=user.email%>">
+            </div>
+         </div>
+          </div>
+          <div class="form-group row  mt-3">
+            <label for="productStock" class="col-sm-2 col-form-label">Phone</label>
+            <div class="col-md-12">
+              <input type="text"  class="form-control" id="phoneNumber" name="phoneNumber" value=" <%=user.phoneNumber%>">
+            </div>
+          
+          </div>
+      
+          <div class="col-md-12">
+            <button type="submit" class="btns">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- popup -->
+
+
+
+
+  <script>
+    function openPopup() {
+      var popup = document.getElementById("popupe");
+      popup.style.display = "block";
+    }
+  
+    function closePopup() {
+      var popup = document.getElementById("popupe");
+      popup.style.display = "none";
+    }
+  </script>
+
+

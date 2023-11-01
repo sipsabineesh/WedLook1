@@ -6,7 +6,7 @@
     <div class="container">
         <div class="box-nav d-flex-justify-between">
           <div class="filter">
-                <a href="/admin/view-category"><i class=" fas fa-angle-double-left"></i>All Category</a>
+                <a href="/admin/view-category"><i class=" fas fa-angle-double-left"></i>All Categories</a>
           </div>
         </div>
         <div class="form-title text-center">
@@ -14,28 +14,33 @@
             <span class="text-light">Create a new category using the form below</span>
         </div>
         <!--Form Handling-->
-        <form action="/admin/add-category" method="POST" enctype="multipart/form-data">
-            <div class="form-group row">
-              <label for="category-name" class="col-sm-2 col-form-label">Name</label>
-              <div class="col-sm-10">
-                <input type="text"  class="form-control" id="categoryName" name="categoryName">
-              </div>
+        <form action="/admin/add-category" method="POST" id="add-category-form" enctype="multipart/form-data">
+          <div class="form-group row  mt-3">
+            <label for="categoryName" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-md-4">
+              <input type="text"  class="form-control" id="categoryName" name="categoryName">
+              <span id="nameError"></span>
             </div>
-            <div class="form-group row">
-              <label for="category-description" class="col-sm-2 col-form-label">Description</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="categoryDescription" name="categoryDescription">
-              </div>
+      
+          </div>
+          <div class="form-group row  mt-3">
+            <label for="categoryDescription" class="col-sm-2 col-form-label">Description</label>
+            <div class="col-md-4">
+              <textarea placeholder="" class="form-control" style="width:100%; height:120px" id="categoryDescription" name="categoryDescription"></textarea>
+              <span id="descriptionError"></span>
             </div>
-            <div class="form-group row">
-              <label for="category-description" class="col-sm-2 col-form-label">Image</label>
-              <div class="col-sm-10">
+            <label for="categoryImage" class="col-sm-2 col-form-label">Image</label>
+            <div class="col-md-4">
+              <div class="form-group">
                 <input type="file" class="form-control" id="categoryImage" name="image">
-              </div>
+                <span id="imageError"></span>
             </div>
+         </div>
+          </div>
+           
             <div class="form-group row mt-3">
                 <div class="col-sm-10 ml-5">
-                  <input type="submit" class="btn btn-primary" value="Save">
+                  <input type="submit" class="btns" value="Save">
                 </div>
               </div>
           </form>
@@ -47,3 +52,74 @@
 <!--include Footer-->
 <%- include('../partial/_adminFooter')%>
 <!--include /Footer-->
+<script>
+  const thisForm = document.getElementById("add-category-form")
+  const name = document.getElementById("categoryName")
+  const description = document.getElementById("categoryDescription")
+  const image = document.getElementById("categoryImage");
+  const nameError = document.getElementById("nameError")
+  const descriptionError = document.getElementById("descriptionError")
+  const imageError = document.getElementById("imageError");  
+
+  function isNumeric(inputValue) {
+  // Use a regular expression to match only numeric characters (0-9)
+  const numericPattern = /^[0-9]+$/;
+  return numericPattern.test(inputValue);
+}
+
+
+function nameValidation(){
+const nameValue = name.value
+if(nameValue.trim()==0){
+  nameError.innerHTML = 'Category title is required'
+  nameError.style.color = 'red'
+  name.style.border = "solid 2px red";
+  return false;
+}
+nameError.innerHTML = ""
+nameError.style.color = "green"
+name.style.border = "solid 2px green";
+return true
+  
+}
+
+
+function imageValidation(){ 
+  if (image.files.length === 0) { 
+    imageError.innerHTML = "Please select image for the product."; 
+    imageError.style.color = 'red'
+    image.style.border = "solid 2px red";
+    return false
+  } 
+  else {
+    imageError.innerHTML = "";
+    imageError.style.color = 'green'
+    image.style.border = "solid 2px green";
+    return true
+}
+}
+
+function descriptionValidation(){
+const descriptionValue = description.value
+if(descriptionValue.trim()==0){
+  descriptionError.innerHTML = 'Descripion is required'
+  descriptionError.style.color = 'red'
+  description.style.border = "solid 2px red";
+  return false;
+}
+descriptionError.innerHTML = ""
+descriptionError.style.color = "green"
+description.style.border = "solid 2px green";
+return true
+}
+
+thisForm.addEventListener("submit",(event)=>{
+event.preventDefault();
+if(!nameValidation() || !descriptionValidation()|| !imageValidation() ) {
+  return false
+}else{
+  thisForm.submit()
+}
+})
+
+</script>

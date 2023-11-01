@@ -1,6 +1,6 @@
 
-
 var Category = require('../model/categoryModel')
+
 exports.create=(req,res) => {
     //validate request
     if(!req.body){
@@ -19,7 +19,7 @@ exports.create=(req,res) => {
         .save(category)
         .then(data =>{
             // res.send(data)
-            res.redirect('/admin/add-category')
+            res.redirect('/admin/view-category')
     
         })
         .catch(err => {
@@ -59,21 +59,28 @@ exports.create=(req,res) => {
    } 
 
    //update by user id and save user
-exports.update=(req,res) => {
+exports.update=async(req,res) => {
     if(!req.body){
            return res
            .status(400)
            .send({message:"Data to update cannot be empty"})
      }
    
-     const id = req.params.id
+     const id = req.body.id
+
+     const categoryData = await Category.findById(req.body.id);
+     const images = req.files.map(file => file.filename);
+     const updatedImages = images.length > 0 ? images : categoryData.images;
+     req.body.categoryImage = updatedImages
+
      Category.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
     .then(data =>{
        if(!data){
            res.status(404).send({message:`Cannot update  with ${id}.May be user not found`})
        }
        else{
-           res.send(data)
+        //    res.send(data)
+           res.redirect('/admin/view-category')
        }
     })
     .catch(err =>{

@@ -1,0 +1,202 @@
+<!--include Header-->
+<%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+<!--Main Section-->
+<main id="site-main">
+    <div class="container">
+      <div class="col-md-12">
+        <div class="box-nav d-flex-justify-between">
+          <div class="filter">
+                <a href="/admin/couponList"><i class=" fas fa-angle-double-left"></i>All Coupons</a>
+          </div>
+        </div>
+        <div class="form-title text-center">
+            <h2 class="text-dark">Add Coupon</h2>
+            <span class="text-light">Create a new Coupon using the form below</span>
+        </div>
+        <!--Form Handling-->
+        <form>
+            <div class="form-group row  mt-3">
+              <label for="couponName" class="col-sm-2 col-form-label">Coupon Code</label>
+              <div class="col-md-4">
+                <div class="input-group">
+                  <input type="text" id="couponName" class="form-control" value="" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                  <button class="btns btn-outline-info" type="button" onclick="generateCoupon()">Generate Code</button>
+                  <p id="error1" class="text-danger"></p>
+                </div>
+              </div>
+              <label for="validity" class="col-sm-2 col-form-label">Validity</label>
+              <div class="col-md-4">
+                  <input type="date" name="validity" class="form-control" id="validity" cols="45" rows="5">
+                  <p id="error2" class="text-danger"></p>
+              </div>
+     
+            </div>
+            <div class="form-group row  mt-3">
+              <label for="minAmount" class="col-sm-2 col-form-label">Min Purchase</label>
+              <div class="col-md-4">
+                <input id="minAmount" type="number" name="" class="form-control" />
+                  <p id="error3" class="text-danger"></p>
+              </div>
+              <label for="discountPercentage" class="col-sm-2 col-form-label">Discount(%)</label>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <input id="discountPercentage" type="number" class="form-control" />
+                  <p id="error4" class="text-danger"></p>
+              </div>
+           </div>
+            </div>
+            <div class="form-group row  mt-3">
+              <label for="maxDiscountValue" class="col-sm-2 col-form-label">Max Discount(₹)</label>
+              <div class="col-md-4">
+                <input id="maxDiscountValue" type="number" class="form-control" />
+                <p id="error5" class="text-danger"></p>
+              </div>
+              <label for="description" class="col-sm-2 col-form-label">Description</label>
+              <div class="col-md-4">
+                <div class="form-group">
+                     <textarea name="" class="form-control" id="description" cols="45" rows="5"></textarea>
+                  <p id="error6" class="text-danger"></p>
+              </div>
+           </div>
+            </div>
+            <div class="form-group row mt-3">
+                <div class="col-sm-10 ml-5">
+                  <input type="submit" class="btns saveBtn" onclick="validatorCoupon()" value="Save">
+                </div>
+              </div>
+          </form>
+        <!--/Form Handling-->
+      </div>
+        
+    </div>
+
+</main>
+<!--/Main Section-->
+<!--include Footer-->
+<%- include('../partial/_adminFooter')%>
+<!--include /Footer-->
+
+
+<script>
+ function validatorCoupon(){ alert("validate")
+const couponName = document.getElementById('couponName')
+const validity = document.getElementById('validity')
+const minAmount = document.getElementById('minAmount')
+const discountPercentage = document.getElementById('discountPercentage')
+const maxDiscount = document.getElementById('maxDiscountValue')
+const description = document.getElementById('description')
+
+const couponNameValue = couponName.value.trim()
+const validityValue = validity.value.trim()
+const minAmountValue = minAmount.value.trim()
+const discountPercentageValue = discountPercentage.value.trim()
+const maxDiscountValue = maxDiscount.value.trim()
+const descriptionValue = description.value.trim()
+
+const error1 = couponName.parentElement.querySelector('p')
+const error2 = validity.parentElement.querySelector('p')
+const error3 = minAmount.parentElement.querySelector('p')
+const error4 = discountPercentage.parentElement.querySelector('p')
+const error5 = maxDiscount.parentElement.querySelector('p')
+const error6 = description.parentElement.querySelector('p')
+
+error1.innerText = ''
+error2.innerText = ''
+error3.innerText = ''
+error4.innerText = ''
+error5.innerText = ''
+error6.innerText = ''
+
+let flag = 1
+
+if (couponNameValue == '') {
+ error1.innerText = 'Coupon code is required'
+ flag = 2
+}
+if (validityValue == '') {
+ error2.innerText = 'Validity is required'
+ flag = 2
+}
+if (minAmountValue == '') {
+ error3.innerText = 'Minimum amount is required'
+ flag = 2
+}
+if (minAmountValue < 0) {
+ error3.innerText = 'Minimum amount should be greater than or Equal to Zero'
+ flag = 2
+}
+if (discountPercentageValue == '') {
+ error4.innerText = 'Discount percentage is required'
+ flag = 2
+}
+if (discountPercentageValue <= 0 ||discountPercentageValue >= 99) {
+ error4.innerText = 'Discount percentage should be between  1 and 99 '
+ flag = 2
+}
+if (maxDiscountValue == '') {
+ error5.innerText = 'Maximum discount is required'
+ flag = 2
+}
+if (maxDiscountValue <= 0) {
+ error5.innerText = 'Maximum discount should be greater than Zero'
+ flag = 2
+}
+if (descriptionValue == '') {
+ error6.innerText = 'Description is required'
+ flag = 2
+}
+
+if (flag == 1) {
+ submit(couponNameValue, validityValue, minAmountValue, discountPercentageValue, maxDiscountValue, descriptionValue)
+}
+}
+
+function submit(coupon, validity, minAmount, minDiscountPercentage, maxDiscount, description){
+ $.ajax({
+     url : '/admin/add-coupon',
+     method : 'POST',
+     data : {
+         coupon : coupon,
+         validity : validity,
+         minPurchase : minAmount,
+         minDiscountPercentage : minDiscountPercentage,
+         maxDiscount : maxDiscount,
+         description : description
+     },
+     success:(response)=>{
+       console.log(response.status);
+         if(response.status){
+           Swal.fire({
+                 icon: 'success',
+                 title: 'Coupon Added Successfully!',
+                 showConfirmButton: false,
+                 timer: 5000
+             }).then(() => {
+                 location.href = '/admin/couponList';
+             });
+         }else{
+           Swal.fire({
+                 icon: 'error',
+                 title: 'Oops...',
+                 text: 'Coupon Code already exists!',
+                 timer: 5000
+             });
+         }
+         location.href = '/admin/couponList';
+     }
+ })
+}
+
+
+function generateCoupon() { alert('generate coupun fn')
+ $.ajax({
+   url: '/admin/generate-coupon-code',
+   method: 'GET',
+   success: (response) => {
+     document.getElementById('couponName').value = response.couponCode;
+   }
+
+ })
+}
+</script>

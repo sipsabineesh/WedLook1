@@ -3,7 +3,7 @@
 <!--include /Header -->
     <style>
         body {
-            font-family: Arial, sans-serif;
+            /* font-family: Arial, sans-serif; */
             background-color: #f5f5f5;
             margin: 0;
             padding: 0;
@@ -11,6 +11,7 @@
 
         .section-border {
             max-width: 1200px;
+            min-height: 70vh;
             margin: 30px auto;
             padding: 20px;
             background-color: #fff;
@@ -102,31 +103,62 @@
             border-radius: 4px;
             margin: 0 10px;
         }
-    </style>
+        
+#toast, #toast-cart{
+  padding: 10px;
+  padding-left: 5px;
+  position: fixed;
+  width: 230px;
+  height: 50px;
+  top: 0;
+  left: 80%;
+  transform:translate(-50%);
+  background-color: #EFF2FF;
+  color: #76777E;
+  padding: 1px;
+  border-radius: 8px;
+  text-align:center;
+  z-index: 99999;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  visibility: hidden;
+  opacity: 0;-ms-display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+#toast.show, #toast-cart.show{
+  visibility:visible;
+  animation:fadeInOut 3s;
+}
+
+@keyframes fadeInOut{
+  5%,95%{opacity:1;top:50px}
+  15%,85%{opacity:1;top:30px}
+}
+</style>
+
+ 
 </head>
 <body>
     <div class="container">
         <h1><span style="text-indent: 20px;">Cart</span></h1>
         <hr>
+        <h3><span style="text-indent: 20px;">Your Cart</span></h3>
+        <hr>
         <div class="section-border">
-            <!-- <div class="cart-item">
-                <img src="/img/green.jpg" alt="Product 1">
-                <div class="cart-item-details">
-                    <h2 class="cart-item-title">Product 1</h2>
-                    <p>Price: <span class="cart-item-price">$19.99</span></p>
-                    <p>Quantity: 2</p>
-                </div>
-            </div> -->
+         <div id="toast-cart"></div>
+          <% if(cartDetails.length != 0) { %>
             <% for (var i=0; i < cartDetails.length;i++) {%>
             <div class="cart-item">
-                <img src="/img/product-images/<%= cartDetails[i].productImage %>">
+                <img src="/img/product-images/<%= cartDetails[i].productImage[0] %>">
                 <div class="cart-item-details">
                     <h4 class="cart-item-title"><%= cartDetails[i].productName %></h4>
                     <p class="cart-item-price">Price: <span>&#8377;<%= cartDetails[i].productPrice %></span></p>
                     <p class="cart-item-description"><span><%= cartDetails[i].productDescription %></span></p>
                     <div class="quantity-control">
                         <button class="decrement-quantity" onclick="decrementQuantity('<%= cartDetails[i]._id %>')">-</button>
-                        <input type="number" id="<%= cartDetails[i]._id %>" class="cart-quantity" name="quantity1" min="1" value="<%= cartDetails[i].quantity %>">
+                        <input type="text" id="<%= cartDetails[i]._id %>" class="cart-quantity" name="quantity1" min="1" value="<%= cartDetails[i].quantity %>">
                         <button class="increment-quantity" onclick="incrementQuantity('<%= cartDetails[i]._id %>')">+</button>
                     </div>
                 </div>
@@ -137,7 +169,11 @@
             <div class="cart-total">
                 Total: <span id="cart-total-price"><%= totalPrice%></span>
             </div>
-            <a href="#"><div class="btns">Checkout</div></a>
+           
+            <a href="/check-out"><div class="btns">Checkout</div></a>
+            <% } else {%>
+                <p>No Items in your cart</p>
+            <%}%>
         </div>
     </div>
 </body>
@@ -155,12 +191,23 @@
     function incrementQuantity(prodId) {
         const inputElement = document.getElementById(prodId);
         const currentValue = parseInt(inputElement.value);
-        inputElement.value = currentValue + 1;
+        const qty = currentValue + 1;
         $.ajax({
-    url:`http://localhost:3000/increment-cart-quantity/${prodId}`,
+    url:`http://localhost:3000/increment-cart-quantity/${prodId}/${qty}`,
     method: 'POST',
     success: (response) => {
-        document.getElementById('cart-total-price').innerHTML = `${response.TotalPrice}`;
+        if(response === "Out Of Stock"){
+            var cart = document.getElementById("toast-cart");
+            cart.classList.add("show");
+            cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Out Of Stock';
+            setTimeout(function(){
+                cart.classList.remove("show");
+            }, 3000);
+        }
+        else{
+            inputElement.value = currentValue + 1;
+            document.getElementById('cart-total-price').innerHTML = `${response.TotalPrice}`;
+        }
        
     }})
     }
@@ -200,3 +247,117 @@
 <!-- include Header-->
 <%- include('../partial/_userFooter')%>
 <!--include /Header -->
+
+<script>
+    const myForm = document.getElementById("myForm")
+
+
+  const name = document.getElementById("name")
+  const description = document.getElementById("description")
+  const price = document.getElementById("price")
+  const stock = document.getElementById("stock")
+
+
+  const nameError = document.getElementById("nameError")
+  const descriptionError = document.getElementById("descriptionError")
+  const priceError = document.getElementById("priceError")
+  const stockError = document.getElementById("stockError")
+
+function nameValidation(){
+const nameValue = name.value
+      if(nameValue.trim()==0){
+          nameError.innerHTML = 'Product title is required'
+          nameError.style.color = 'red'
+          name.style.border = "solid 2px red";
+          return false;
+      }
+nameError.innerHTML = ""
+      nameError.style.color = "green"
+      name.style.border = "solid 2px green";
+      return true
+  
+
+
+}
+
+
+function descriptionValidation(){
+const descriptionValue = description.value
+      if(descriptionValue.trim()==0){
+          descriptionError.innerHTML = 'Descripion is required'
+          descriptionError.style.color = 'red'
+          description.style.border = "solid 2px red";
+          return false;
+      }
+descriptionError.innerHTML = ""
+      descriptionError.style.color = "green"
+      description.style.border = "solid 2px green";
+      return true
+  
+
+
+}
+
+function priceValidation(){
+const priceValue = price.value
+      if(priceValue.trim()==0){
+          priceError.innerHTML = 'Price is Required'
+          priceError.style.color = 'red'
+          price.style.border = "solid 2px red";
+          return false;
+      }
+if(priceValue <= 0 ){
+          priceError.innerHTML = 'Price Must be greater than zero'
+          priceError.style.color = 'red'
+          price.style.border = "solid 2px red";
+          return false;
+      }
+priceError.innerHTML = ""
+      priceError.style.color = "green"
+      price.style.border = "solid 2px green";
+      return true
+  
+
+
+}
+
+
+function stockValidation(){
+const stockValue = stock.value
+      if(stockValue.trim()==0){
+          stockError.innerHTML = 'Stock is Required'
+          stockError.style.color = 'red'
+          stock.style.border = "solid 2px red";
+          return false;
+      }
+if(stockValue <  0 ){
+          stockError.innerHTML = 'Stock Must be greater than or equal to zero'
+          stockError.style.color = 'red'
+          stock.style.border = "solid 2px red";
+          return false;
+      }
+stockError.innerHTML = ""
+      stockError.style.color = "green"
+      stock.style.border = "solid 2px green";
+      return true
+  
+
+
+}
+
+
+
+myForm.addEventListener("submit",(event)=>{
+      event.preventDefault();
+      if(!nameValidation() || !descriptionValidation() || ! priceValidation()) {
+          return false
+      }else{
+          myForm.submit()
+      }
+
+  })
+
+
+
+
+</script>

@@ -8,6 +8,9 @@ html{
  scroll-behavior:smooth;
  }
  
+body{
+  background-color: #f5f5f5;
+ }
 .cover-bg{
  background-size:cover;
  background-position:center;
@@ -289,7 +292,7 @@ background:transparent;
  
  /**showContact section css**/
  .showContact {
-   background-image:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url(../images/showcontact_img.jpg);
+   background-image:#fff;
    background-attachment:fixed;
    height:50vh;
    width:100%;
@@ -354,60 +357,64 @@ background:transparent;
   }
    
    
- /**Contact Section css**/
- .contact
+ /**Check-out Section css**/
+ .check-out
  {
-  background-image:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url(../images/contact.jpeg);
+  background-image:#fff;
   background-attachment:fixed;
  }
   
- .contact .section_title h3 {
+ .check-out .section_title h3 {
    color:#fff;
  }
    
-.contact .part_info {
-   background:linear-gradient(to right,transparent,rgba(200,200,200,0.1),transparent);
+.check-out .part_info {
+   background:#fff;
    padding:30px;
    margin-bottom:50px;
  }
  
-.contact .info-block{
+.check-out .info-block{
  border-right:1px solid #fff;
  }
     
- .contact .part_info .info-block .icon {
+ .check-out .part_info .info-block .icon {
   margin-bottom:15px;
  }
  
- .contact .part_info .info-block .icon i {
+ .check-out .part_info .info-block .icon i {
   display:inline-block;
   color:#fff;
   font-size:38px;
  }
  
- .contact .part_info .info-block h5,p{
+ .check-out .part_info .info-block h5,p{
   color:rgb(214, 196, 196);
   font-size:15px; 
   margin-bottom:10px;
   }
   
- .contact .part_info .info-block p{
+ .check-out .part_info .info-block p{
   color:#fff;
   opacity:0.9;
   }
   
- .contact .part_info .col-md-4:last-child .info-block{
+ .check-out .part_info .col-md-4:last-child .info-block{
     border-right:0;
    }
    
-.contact .contact-form {
- background:linear-gradient(to right,transparent,rgba(200,200,200,0.1),transparent);
+.check-out .address-form,
+.check-out .payment-method-form,
+.check-out .order-details-form{
+ background:#fff;
  padding:30px;
  }
  
- .contact .contact-form input,
- .contact .contact-form textarea{
-   color:#fff;
+ .check-out .address-form input,
+ .check-out .payment-method-form input,
+ .check-out .order-details-form input,
+ .check-out .address-form textarea{
+   color:#000;
    background:transparent;
    padding:10px 15px;
    border-radius:0;
@@ -418,25 +425,42 @@ background:transparent;
    transition:0.3s all;
   }
   
- .contact .contact-form input::placeholder,
- .contact .contact-form textarea::placeholder{
-   color:#fff;
+ .check-out .address-form input::placeholder,
+ .check-out .payment-method-form input::placeholder,
+ .check-out .order-details-form input::placeholder,
+ .check-out .address-form textarea::placeholder{
+   color:#8a8888;
  }
  
- .contact .contact-form input:focus,
- .contact .contact-form textarea:focus{
-   border:1px solid #fff;
+ .check-out .address-form input:focus,
+ .check-out .payment-method-form input:focus,
+ .check-out .order-details-form input:focus,
+ .check-out .address-form textarea:focus{
+   border:1px solid #000;
    outline:none;
    box-shadow:none;
  }
  
- .contact .contact-form textarea{
+ .check-out .address-form textarea{
     height:120px;
  }
-   
+
+ .check-out .payment-method-form{
+  height :250px;
+ }
+  
+ .check-out .order-details-form{
+  height:450px;
+ }
+
+ .check-out .address-inner-container{
+  margin:25px;
+ }
+ 
+
   /**foooter section css**/
  .footer{
-    background:#212121;
+    background:#000;
     padding:80px 0;
  }
    
@@ -575,13 +599,13 @@ background:transparent;
   background-image:linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)),url(../images/bkgrnd.jpg);
   background-attachment:fixed;
  }
- .contact .signup-form {
- background:linear-gradient(to right,transparent,rgba(200,200,200,0.1),transparent);
+ .check-out .signup-form {
+ background:#fff;
  padding:30px;
  }
  
- .contact .signup-form input,
- .contact .signup-form textarea{
+ .check-out .signup-form input,
+ .check-out .signup-form textarea{
    color:#fff;
    background:transparent;
    padding:10px 15px;
@@ -593,23 +617,23 @@ background:transparent;
    transition:0.3s all;
   }
   
- .contact .signup-form input::placeholder,
- .contact .signup-form textarea::placeholder{
+ .check-out .signup-form input::placeholder,
+ .check-out .signup-form textarea::placeholder{
    color:#fff;
  }
  
- .contact .signup-form input:focus,
- .contact .signup-form textarea:focus{
+ .check-out .signup-form input:focus,
+ .check-out .signup-form textarea:focus{
    border:1px solid #fff;
    outline:none;
    box-shadow:none;
  }
  
- .contact .signup-form textarea{
+ .check-out .signup-form textarea{
   height:120px;
  }
 
-.contact .signup-form .gender-details{
+.check-out .signup-form .gender-details{
   /*display:none;*/
   width:30px;
  } 
@@ -893,7 +917,7 @@ input[type="radio"]:checked + label::after{
     .part_text{
       padding-bottom:100px;
     }
-    .contact .part_info .info-block{
+    .check-out .part_info .info-block{
      border:none;
     }
     .xs-md-30 {
@@ -992,3 +1016,80 @@ input[type="radio"]:checked + label::after{
   5%,95%{opacity:1;top:50px}
   15%,85%{opacity:1;top:30px}
 }
+
+.section-border {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.errMsg{
+  color:#ff0000;
+}
+
+
+/* Responsive Pagination Styles */
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pagination {
+  margin: 0;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #000;
+  border-color: #000;
+  color: #fff; /* Set the active link text color to black */
+}
+
+.pagination .page-link {
+  color: #000;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9ecef;
+  color: #000; /* Set the hover link text color to black */
+}
+
+/* Default styles for the limit selection dropdown */
+.limit-selection {
+  margin-bottom: 10px;
+}
+
+/* Style the select element */
+.limit-selection select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+}
+
+/* Media query for screens smaller than 768px */
+@media (max-width: 768px) {
+  /* Adjust styles for smaller screens */
+  .limit-selection {
+    text-align: center;
+  }
+
+  .limit-selection select {
+    width: auto;
+    display: inline-block;
+  }
+}
+
+/* Media query for screens smaller than 480px */
+@media (max-width: 480px) {
+  /* Further adjust styles for smaller screens */
+  .limit-selection {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+}
+

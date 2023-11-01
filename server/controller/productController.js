@@ -3,26 +3,33 @@
 var Product = require('../model/productModel')
 var Category = require('../model/categoryModel')
 const User = require('../model/userModel')
+const Mongoose= require("mongoose");
 const { ObjectId } = require("mongodb");
 
 
 exports.loadProduct=async (req,res) => {
     try {
         const categories = await Category.find({})
-            res.render('admin/add-product',{category:categories})
+            res.render('admin/add-product',{category:categories,message:""})
       } catch (error) {
         console.log(error.message);
         
       }
 }
 
-exports.create=(req,res) => {
+exports.create= async (req,res) => {
     //validate request
     if(!req.body){
         res.status(400).send({message:"Content cannot be empty"})
         return
     }
-    console.log(req.files)
+    const categories = await Category.find({})
+    const productName = req.body.productName.toLowerCase()
+      const existingProduct = await Product.findOne({productName:productName})
+
+      if(existingProduct){
+        return res.render("admin/add-product",{category:categories,message :"Product already exists"})
+      } 
 
     //new product
     const images = req.files.map(file => file.filename);
@@ -37,10 +44,10 @@ exports.create=(req,res) => {
     //save product in the database
     product
         .save(product)
-        .then(data =>{
-            // res.send(data)
-            res.redirect('/admin/add-product')
-    
+        .then(async (data) =>{
+           // res.send(data)
+           const viewProduct = await Product.find({})
+            res.redirect('/admin/view-product')
         })
         .catch(err => {
             res.status(500).send({
@@ -48,6 +55,55 @@ exports.create=(req,res) => {
             })
         })
     }
+    
+    
+    exports.listProducts = async (req, res) => {
+        const defaultPerPage = 10;
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || defaultPerPage; 
+        const skip = (page - 1) * limit;
+        const selectedFilter = req.query.filter || 'all';
+        const productNameSearch = req.query.productNameSearch || '';
+        console.log(productNameSearch)
+        let totalCountQuery = Product.find();
+
+        if (selectedFilter === 'in_stock') {
+          totalCountQuery = totalCountQuery.where('productStock').gt(0);
+        } else if (selectedFilter === 'out_of_stock') {
+          totalCountQuery = totalCountQuery.where('productStock').equals(0);
+        }
+       
+        const totalProducts = await totalCountQuery.countDocuments();
+        const startSerialNumber = (page - 1) * limit + 1;
+        const searchPattern = new RegExp(`.*${productNameSearch}.*`, 'i');
+
+        let productsQuery = Product.find();
+        if (productNameSearch) {
+            productsQuery = productsQuery.where('productName').regex(searchPattern);
+        }
+        if (selectedFilter === 'in_stock') {
+          productsQuery = productsQuery.where('productStock').gt(0);
+        } else if (selectedFilter === 'out_of_stock') {
+          productsQuery = productsQuery.where('productStock').equals(0);
+        }
+        productsQuery = productsQuery.sort({ createdAt : -1 });
+
+        const product = await productsQuery
+          .skip(skip)
+          .limit(limit)
+          .populate('productCategory');
+        
+        res.render('admin/view-product', {
+          product,
+          currentPage: page,
+          pages: Math.ceil(totalProducts / limit),
+          startSerialNumber:startSerialNumber,
+          selectedLimit:limit,
+          selectedFilter:selectedFilter,
+          productNameSearch:productNameSearch
+        });
+      };
+      
 
     exports.find=async (req,res) => {
         if(req.params.id){
@@ -128,28 +184,26 @@ exports.create=(req,res) => {
 
    
    //update by user id and save user
-exports.update=(req,res) => { 
+exports.update=async (req,res) => { 
     if(!req.body){
            return res
            .status(400)
            .send({message:"Data to update cannot be empty"})
      }
    
-     const id = req.params.id
-    //  const images = req.files.map(file => productImage.filename);
-    //  const updatedImages = images.length > 0 ? images : productData.images; 
-    //  req.body.productImage = updatedImages
-   // const images = req.files.map((file) => `img/productImages/${file.filename}`);
-
+    const id = req.body.id
+    const productData = await Product.findById(req.body.id);
     const images = req.files.map(file => file.filename);
-    req.body.productImage = images
+    const updatedImages = images.length > 0 ? images : productData.images;
+    req.body.productImage = updatedImages
      Product.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
     .then(data =>{
        if(!data){
            res.status(404).send({message:`Cannot update  with ${id}.May be user not found`})
        }
        else{
-           res.send(data)
+          //  res.send(data)
+          res.redirect('/admin/view-product')
        }
     })
     .catch(err =>{

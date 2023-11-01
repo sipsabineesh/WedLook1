@@ -1,5 +1,6 @@
 var User = require('../model/userModel')
 var Product = require('../model/productModel')
+const Mongoose= require("mongoose");
 const { ObjectId } = require("mongodb");
 
 
@@ -13,7 +14,7 @@ exports.loadWishList = async (req,res) => {
        User.aggregate([
         {
           $match: {
-            _id: new ObjectId(userId),
+            _id: new Mongoose.Types.ObjectId(userId),
             wishlist: { $exists: true, $ne: [] }, 
           },
         },
@@ -74,7 +75,7 @@ exports.addToWishList = (req,res) => {
  const user = req.session.user
  User.findOne({
   _id: user._id,
-  'wishlist.productId': new ObjectId(id)
+  'wishlist.productId': new Mongoose.Types.ObjectId(id)
 })
 .then((productExists) => {
   console.log(productExists)

@@ -72,6 +72,17 @@ exports.viewProductDetailsRoutes = (req,res) => {
     }
 }
 
+
+exports.orderResponseRoutes = (req,res) => {
+    let user = req.session.user
+    if(req.session.loggedIn){
+        res.render('user/order-response',{user})
+    }
+    else{
+        res.render('user/login',{"errMsg":"Please Login"})
+    }
+}
+
 exports.userLogoutRoutes = (req,res) => {
 	req.session.loggedIn=false;
 	req.session.destroy()
@@ -95,7 +106,7 @@ exports.addCategoryRoutes = (req,res) => {
 
 
 exports.addProductRoutes = (req,res) => {
-    res.render('admin/add-product')
+    res.render('admin/add-product',{message:""})
 }
 
 
@@ -139,3 +150,14 @@ exports.adminLogoutRoutes = (req,res) => {
    // res.render('admin/view-category')
 //  }
 
+
+exports.errorAccessRoutes = (req,res) => {
+        res.render('user/error-access')
+        let user = req.session.user
+        if(req.session.loggedIn){
+            res.render('user/error-access',{user})
+        }
+        else{
+            res.render('user/login',{"errMsg":"Please Login"})
+        }
+    }

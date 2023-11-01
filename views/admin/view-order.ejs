@@ -1,0 +1,256 @@
+<!--include Header-->
+<%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+<style>
+  #limitSelect{
+    width:65px;
+  }
+  
+/* Style for the dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Style for the dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 120px; 
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Style for dropdown links */
+.dropdown-content a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #333;
+}
+
+/* Change color on hover */
+.dropdown-content a:hover {
+  background-color: #060606;
+  color: white;
+}
+
+/* Show the dropdown content when hovering over the dropdown button */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Responsive design for small screens */
+@media screen and (max-width: 600px) {
+  .dropdown-content {
+    min-width: 100px;
+  }
+}
+    @media (max-width: 767px) {
+  .table-responsive .dropdown-menu {
+    position: relative; 
+  }
+}
+</style>
+<!--Main Section-->
+<main id="site-main">
+<div id="toast"></div>
+    <div class="container">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List </h2>
+                </div>
+               
+            </div>
+            <div class="row align-items-center">
+                <!-- Limit Selection Dropdown Column -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                      <form action="/admin/view-order" method="get">
+                      <label for="limitSelect">Items per page:</label>
+                      <select class="form-control" id="limitSelect" name="limit" onchange="this.form.submit()">
+                        <option value="10" <%= limit === 10 ? 'selected' : '' %>>10</option>
+                        <option value="20" <%= limit === 20 ? 'selected' : '' %>>20</option>
+                        <option value="30" <%= limit === 30 ? 'selected' : '' %>>30</option>
+                      </select>
+                      </form>
+                    </div>
+                  </div>
+                
+                  <!-- Pagination Column -->
+                  <div class="col-md-6">
+                    <div class="pagination-container">
+                      <ul class="pagination">
+                          <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                              </a>
+                            </li>
+                          <% } %>
+                      
+                          <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                              <a class="page-link" href="?page=<%= i %>&limit=<%= selectedLimit %>"><%= i %></a>
+                            </li>
+                          <% } %>
+                      
+                          <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                              <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                            </li>
+                          <% } %>
+                        </ul>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                     
+                    </div>
+                </div>
+            <div class="card mb-4">
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Sl No.</th>
+                                    <th>User</th>
+                                    <th>Date</th> 
+                                    <th>OrderStatus</th>
+                                    <th>Total Price</th>
+                                    <th colspan="2">Action</th>
+                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(function(order,index) {%>
+                                <tr>
+                                    <td><%= startSerialNumber + index %></td>
+                                    <td><b><%=order.orders.name%></b></td>
+                                    <td><%=order.orders.createdAt.toLocaleString()%></td>
+                                    <td>
+                                        <% if (order.orders.orderStatus == 'Placed') { %>
+                                            <div class="rounded-pill alert-primary"><%= order.orders.orderStatus %></div>
+                                        <% } else if (order.orders.orderStatus == 'Dispatched') { %>
+                                            <div class="rounded-pill alert-info"><%= order.orders.orderStatus %></div>
+                                        <% } else if (order.orders.orderStatus == 'Cancel Requested' ) { %>
+                                            <div class="rounded-pill alert-warning"><%= order.orders.orderStatus %></div>
+                                        <% } else if (order.orders.orderStatus == 'Delivered') { %>
+                                            <div class="rounded-pill alert-success"><%= order.orders.orderStatus %></div>
+                                        <% } else if (order.orders.orderStatus == 'Return Requested' ) { %>
+                                            <div class="rounded-pill alert-warning"><%= order.orders.orderStatus %></div>
+                                        <% } else { %>
+                                            <div class="rounded-pill alert-danger"><%= order.orders.orderStatus %></div>
+                                        <% } %>
+                                    </td>
+                                    <td>₹<%=order.orders.totalPrice%></td>
+                                    <td class="text-end">
+                                        <a href="/admin/order-details?id=<%= order.orders._id%>&user=<%= order.user%>" class="btns">Detail</a>
+                                    </td>
+                                    <td>
+                                      <% if (order.orders.orderStatus !== 'Pending' && order.orders.orderStatus !== 'Delivered'&& order.orders.orderStatus !== 'Cancel Accepted' && order.orders.orderStatus !== 'Return Accepted') { %>
+                                      <div class="dropdown">
+                                        <button class="btns">Respond</button>
+                                        <div class="dropdown-content">
+                                          <%if(order.orders.orderStatus=='Placed'||order.orders.orderStatus=='Cancel Declined'){%>
+                                            <a class="dropdown-item" onclick="orderStatus('<%=order.orders._id%>','Dispatched')">Dispatched</a>
+                                            <a class="dropdown-item" onclick="cancelStatus('<%=order.orders._id%>','<%=order.user%>','Cancel Accepted')">Cancel Order</a>
+                                          <%}else if(order.orders.orderStatus=='Dispatched'){%>
+                                            <a class="dropdown-item" onclick="orderStatus('<%=order.orders._id%>','Delivered')">Delivered</a>
+                                          <%}else if(order.orders.orderStatus=='Cancel Requested'){%>
+                                            <a class="dropdown-item" onclick="cancelStatus('<%=order.orders._id%>','<%=order.user%>','Cancel Accepted')"> Accept Cancel</a>
+                                            <a class="dropdown-item" onclick="cancelStatus('<%=order.orders._id%>','<%=order.user%>','Cancel Declined')">Decline Cancel</a>
+                                          <%}else if(order.orders.orderStatus=='Return Requested'){%>
+                                            <a class="dropdown-item" onclick="returnOrder('<%=order.orders._id%>','<%=order.user%>','Return Accepted')"> Accept Return</a>
+                                            <a class="dropdown-item" onclick="returnOrder('<%=order.orders._id%>','<%=order.user%>','Return Declined')">Decline Return</a>
+                                          <%}%>
+                                        </div>
+                                      </div>
+                                      <%}%>
+                                 </td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+        
+        </section> <!-- content-main end// -->
+          </div>
+      </main>
+      <!--/Main Section-->
+      <!--include Footer-->
+          <%- include('../partial/_adminFooter')%>
+      <!--include /Footer--> 
+      <script>
+  
+  
+        function orderStatus(orderId, status)
+        {
+          console.log(orderId, status);
+          $.ajax({
+            url:'/admin/order-status',
+            method:'put',
+            data: {
+              orderId: orderId,
+              status: status,
+          
+    
+            },
+            success:(response)=>
+            {
+              if(response)
+              {
+                location.reload()
+              }
+            }
+          })
+        }
+        function cancelStatus(orderId,userId, status)
+        {
+          console.log(orderId, status,userId);
+          $.ajax({
+            url:'/admin/cancel-order',
+            method:'put',
+            data: {
+              orderId: orderId,
+              status: status,
+              userId:userId 
+            },
+            success:(response)=>
+            {
+              if(response)
+              {
+                location.reload()
+              }
+            }
+          })
+        }
+        function returnOrder(orderId,userId, status)
+        {
+          console.log(orderId, status);
+          $.ajax({
+            url:'/admin/returnOrder',
+            method:'put',
+            data: {
+              orderId: orderId,
+              status: status,
+              userId:userId 
+            },
+            success:(response)=>
+            {
+              if(response)
+              {
+                location.reload()
+              }
+            }
+          })
+        }
+        
+        </script>

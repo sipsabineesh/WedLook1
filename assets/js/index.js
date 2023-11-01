@@ -148,7 +148,6 @@ $('#reset-password').submit(function(event){
     $.map(unindexed_array,function(n,i){
      data[n['name']] = n['value']
     })
-    alert("indexxxxxxxxxxxxxxxxxx" + data)
     var  request = {
          "url":`http://localhost:3000/admin/update-product/${data.id}`,
          "method":'PUT',
@@ -181,12 +180,23 @@ $('#reset-password').submit(function(event){
  $('.user-blocked').click(function(event){
     var id = $(this).attr( "id" )
     var action = "unblock"
+    var msg = document.getElementById("toast");
+    msg.classList.add("show");
+    msg.innerHTML = '<i class="fa-solid fa-unlock"></i> Unblocked';
+    setTimeout(function(){
+      msg.classList.remove("show");
+    }, 3000);
     var  request = {
         "url":`http://localhost:3000/admin/block-unblock-user/${id}/${action}`,
         "method":'PUT'
       }     
         $.ajax(request).done(function(response){
-            alert("Status Updated Successfully")
+          var msg = document.getElementById("toast");
+          msg.classList.add("show");
+          msg.innerHTML = '<i class="fa-solid fa-unlock"></i> Unblocked';
+          setTimeout(function(){
+            msg.classList.remove("show");
+          }, 3000);
             location.reload()
          })
  })
@@ -194,12 +204,23 @@ $('#reset-password').submit(function(event){
  $('.user-unblocked').click(function(event){
     var id = $(this).attr( "id" )
     var action = "block"
+    var msg = document.getElementById("toast");
+    msg.classList.add("show");
+    msg.innerHTML = '<i class="fa-solid fa-lock"></i> Blocked';
+    setTimeout(function(){
+      msg.classList.remove("show");
+    }, 3000);
     var  request = {
         "url":`http://localhost:3000/admin/block-unblock-user/${id}/${action}`,
         "method":'PUT'
       }     
         $.ajax(request).done(function(response){
-            alert("Status Updated Successfully")
+          var msg = document.getElementById("toast");
+          msg.classList.add("show");
+          msg.innerHTML = '<i class="fa-solid fa-lock"></i> Blocked';
+          setTimeout(function(){
+            msg.classList.remove("show");
+          }, 3000);
             location.reload()
          })
  })
@@ -227,8 +248,10 @@ $('.add-to-item').click(function(event){
        cart.classList.add("show");
        if(response === true)
          cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Product added to cart';
-       else
+       else if(response === false)
          cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Quantity Incremented';
+       else
+         cart.innerHTML = '<i class="fas fa-shopping-cart cart"></i> Out Of Stock';
        setTimeout(function(){
        cart.classList.remove("show");
    }, 3000);
@@ -256,17 +279,74 @@ $('.add-to-item').click(function(event){
   }
 
 $.ajax(request).done(function(response){
-  
      var list = document.getElementById("toast");
     list.classList.add("show");
-    if(response === true)
-      list.innerHTML = '<i class="far fa-heart wish"></i> Product added to List';
-    else
-    list.innerHTML = '<i class="far fa-heart wish"></i> "Already added"';
+    if(response === true) {  alert("ADDED")
+      list.innerHTML = "Added to WishList";
+    //  heart.classList.add("heart-active");
+    }
+    else {
+       list.innerHTML = '<i class="far fa-heart wish"></i> "Already Added"';
+    }
 
     setTimeout(function(){
       list.classList.remove("show");
     },3000);
  })
 }
+
+$('#address-form').submit(function(event){ 
+  event.preventDefault()
+  var unindexed_array = $(this).serializeArray()
+  var data = {}
+  $.map(unindexed_array,function(n,i){
+   data[n['name']] = n['value']
+  })
  
+  var  request = {
+       "url":`http://localhost:3000/add-address/${data.user}`,
+       "method":'POST',
+       "data":data
+     }
+
+   $.ajax(request).done(function(response){
+    var address = document.getElementById("toast");
+       address.classList.add("show");
+       address.innerHTML = '<i class="fa-solid fa-address-book"></i>Address Added';
+       setTimeout(function(){
+       address.classList.remove("show");
+   }, 3000);
+   })
+	location.reload();
+
+})
+ 
+
+
+// $('#add-address').click(function(event){ 
+//   $('#address-form ').style.visibility = 'visible'
+// })
+
+$('#edit-address').submit(function(event){
+  event.preventDefault()
+  var unindexed_array = $(this).serializeArray()
+  var data = {}
+  $.map(unindexed_array,function(n,i){
+   data[n['name']] = n['value']
+  })
+  var  request = {
+       "url":`http://localhost:3000/edit-address/${data.id}`,
+       "method":'PUT',
+       "data":data
+     }
+
+   $.ajax(request).done(function(response){
+       var address = document.getElementById("toast");
+       address.classList.add("show");
+       address.innerHTML = '<i class="fa-solid fa-address-book"></i>Address Updated';
+       setTimeout(function(){
+       address.classList.remove("show");
+   }, 3000);
+   })
+})
+

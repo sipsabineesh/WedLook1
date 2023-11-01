@@ -1,0 +1,345 @@
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<p>ORDER DETAILS</p>
+
+<style>
+body{
+    background:#eee;
+}
+.card {
+    box-shadow: 0 20px 27px 0 rgb(0 0 0 / 5%);
+}
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+    border-radius: 1rem;
+}
+.text-reset {
+    --bs-text-opacity: 1;
+    color: inherit!important;
+}
+a {
+    color: #5465ff;
+    text-decoration: none;
+}
+
+
+.timeline {
+  margin: 50px;
+  text-align: center;
+}
+
+.timeline ol {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeline ol li {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+
+.completed {
+  color: #4CAF50;
+}
+
+.current {
+  color: #FFC107;
+}
+
+.timeline ol li:before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background: #000;
+  color:#aea9a9;
+  border: 2px solid #aea9a9;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.yet-to-complete div i{
+  color:#aea9a9;
+}
+
+.completed:before {
+  background: #4CAF50;
+}
+
+.current:before {
+  background: #FFC107;
+}
+
+.timeline-text {
+  margin-top:25px;
+} 
+
+.line {
+  border-top: 2px solid #aea9a9;
+  width: 100%;
+  margin-top: 18px;
+}
+
+.line-completed{
+  border-top: 2px solid #4CAF50;
+}
+
+</style>
+<div class="container-fluid">
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center py-3">
+            <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> </h2>
+          </div>
+        <h3><span style="text-indent: 20px;">Order Details</span></h3>
+        <hr>
+        <% let status = orders[0].orderStatus %>
+        <div class="section-border">
+        <h5>Order Timeline</h5>
+        <div class="timeline">
+          <ol>
+            <li class=<% if(status == 'Placed'){%>"current"<% }else if(status == 'Pending' || status == 'Dispatched' || status == 'Delivered'){%>"completed"<% }else{%>"yet-to-complete"<%}%>><div class="timeline-text"><i class="fa-solid fa-cart-shopping"></i>Order Placed</i></div></li>
+            <div class="line <% if(status == 'Pending' || status == 'Dispatched' || status == 'Delivered'){%>line-completed"<% }else{%>yet-to-complete"<%}%>"></div>
+            <% if(orders[0].orderStatus != 'Cancel Accepted'){%><li class=<% if(orders[0].orderStatus == 'Pending'){%>"current"<% }else if(orders[0].orderStatus == 'Dispatched'|| orders[0].orderStatus == 'Delivered'){%>"completed"<% }else{%>"yet-to-complete"<%}%>><div class="timeline-text"><i class="fa-solid fa-boxes-packing"></i>Processing</i></div></li><%}%>
+            <div class="line <% if( status == 'Dispatched' || status == 'Delivered'){%>line-completed"<% }else{%>yet-to-complete"<%}%>"></div>
+            <% if(orders[0].orderStatus != 'Cancel Accepted'){%> <li class=<% if(orders[0].orderStatus == 'Dispatched'){%>"completed"<% }else if(orders[0].orderStatus == 'Delivered'){%>"completed"<% }else{%>"yet-to-complete"<%}%>><div class="timeline-text"><i class="fa-solid fa-truck-fast"></i>Shipped</div></li><%}%>
+            <div class="line <% if(status == 'Dispatched' || status == 'Delivered'){%>line-completed"<% }else{%>yet-to-complete"<%}%>"></div>
+            <% if(orders[0].orderStatus != 'Cancel Accepted'){%> <li class=<% if(orders[0].orderStatus == 'Dispatched'){%>"current"<% }else if(orders[0].orderStatus == 'Delivered'){%>"completed"<% }else{%>"yet-to-complete"<%}%>><div class="timeline-text"><i class="fa-solid fa-truck"></i><br>Out for Delivery</div></li><%}%>
+            <div class="line <% if(status == 'Delivered'){%>line-completed"<% }else{%>yet-to-complete"<%}%>"></div>
+            <% if(orders[0].orderStatus != 'Cancel Accepted'){%> <li class=<% if(orders[0].orderStatus == 'Delivered'){%>"current"<% }else{%>"yet-to-complete"<%}%>><div class="timeline-text"><i class="fa-solid fa-house-circle-check"></i>Delivered</div></li><%}%>
+            <% if(orders[0].orderStatus == 'Cancel Accepted'){%>  <div class="line line-ofd"></div>
+            <li class="yet-to-complete"><div class="timeline-text"><i class="fa-solid fa-ban"></i><br>Cancelled</div></li><%}%>
+            <% if(orders[0].orderStatus == 'Return Accepted'){%><div class="line line-deliver"></div>
+            <li class="yet-to-complete"><div class="timeline-text"><i class="fa-solid fa-arrow-right-arrow-left"></i>Returned</div></li><%}%>
+          </ol>
+        </div>
+
+      
+
+        
+      <!-- <ul class="list">
+        <li><a href="#"><span>Order ID</span> :<%=orders[0]._id%></a></li>
+        <li><a href="#"><span>Date</span> : <%=orders[0].createdAt.toLocaleString()%></a></li>
+        <li><a href="#"><span>Total</span> : ₹<%=orders[0].totalPrice%></a></li>
+        <li><a href="#"><span>Payment method</span> : <%=orders[0].paymentMethod%></a></li>
+        <li><a href="#"><span>Payment Status</span> : <%=orders[0].paymentStatus%></a></li>
+        <li><a href="#"><span>Transaction Id</span> : <%=orders[0].razorpayId%></a></li>
+    </ul>
+    <h4>Shipping Address</h4>
+						<ul class="list">
+							<li><a href="#"><span>Name</span> : <%=address.addresses[0].name%></a></li>
+							<li><a href="#"><span>Adress</span> : <%=address.addresses[0].address%></a></li>
+							<li><a href="#"><span>City</span> : <%=address.addresses[0].city%></a></li>
+							<li><a href="#"><span>Locality </span> : <%=address.addresses[0].locality%></a></li>
+							<li><a href="#"><span>Pincode </span> : <%=address.addresses[0].pincode%></a></li>
+							<li><a href="#"><span>State </span> : <%=address.addresses[0].state%></a></li>
+						</ul>
+
+                        <div class="order_details_table">
+                            <h2>Order Details</h2>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Price / Unit</th>
+                                            <th scope="col">Quantity</th>
+                                            <th scope="col">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% products.forEach(function(product,index) {%>
+            
+                                        <tr>
+                                            <td>
+                                                <p><%=product.productName%></p>
+                                            </td>
+                                            <td>
+                                                <p>₹<%=product.productPrice%></p>
+                                            </td>
+                                            <td>
+                                                <h5><%=product.quantity%></h5>
+                                            </td>
+                                            <td>
+                                                <p>₹<%=product.productPrice*product.quantity%></p>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                        <tr>
+                                            <td>
+                                                <h4>Coupon Code</h4>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p><%=orders[0].couponCode%></p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4>Discount %</h4>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p><%=orders[0].discountPercentage%> %</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4>Discount Amount</h4>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p>₹ <%=orders[0].discountAmount%></p>
+                                            </td>
+                                        </tr>
+                                    
+                                        <tr>
+                                            <td>
+                                                <h4>Total</h4>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p>₹ <%=orders[0].totalPrice%></p>
+                                            </td>
+                                            <td>
+                                                <a href="/invoice?id=<%=orders[0]._id%>" class="btn btn-primary">Download Invoice</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div> -->
+      <!-- Main content -->
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Details -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="mb-3 d-flex justify-content-between">
+                <div>
+                  <span class="me-3"><%=orders[0].createdAt.toLocaleString()%></span>
+                  <span class="me-3">#<%=orders[0]._id%></span>
+                  <span class="me-3">|<%=orders[0].orderStatus%></span>
+                </div>
+                <div class="d-flex">
+                  <button class="btn btn-link p-0 me-3 d-none d-lg-block btn-icon-text"><i class="bi bi-download"></i> <span class="text">Invoice</span></button>
+                  <div class="dropdown">
+                    <button class="btn btn-link p-0 text-muted" type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="#"><i class="bi bi-pencil"></i> Edit</a></li>
+                      <li><a class="dropdown-item" href="#"><i class="bi bi-printer"></i> Print</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+             
+              <table class="table table-borderless">
+                <tbody>
+                    <% products.forEach(function(product,index) {%>
+                  <tr>
+                    <td>
+                      <div class="d-flex mb-2">
+                        <div class="flex-shrink-0">
+                          <img src="/img/product-images/<%= product.productImage[0] %>" alt="" width="35" class="img-fluid">
+                        </div>
+                        <div class="flex-lg-grow-1 ms-3 ml-3">
+                          <h6 class="small mb-0"><a href="#" class="text-reset"><%=product.productName%></a></h6>
+                          <span class="small"><%=product.productDescription%></span>
+                        </div>
+                      </div>
+                    </td>
+                    <td><%=product.quantity%></td>
+                    <td class="text-end"><%=product.productPrice%></td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="2">Subtotal</td>
+                    <td class="text-end">₹ <%=orders[0].totalPrice%></td>
+                  </tr>
+                  <!-- <tr>
+                    <td colspan="2">Shipping</td>
+                    <td class="text-end">$20.00</td>
+                  </tr> -->
+                  <tr>
+                    <td colspan="2">Discount</td>
+                    <td class="text-danger text-end">- <%=orders[0].discountAmount%></td>
+                  </tr>
+                  <tr class="fw-bold">
+                    <td colspan="2">TOTAL</td>
+                    <td class="text-end">₹ <%=orders[0].totalPrice%></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+          <!-- Payment -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-lg-6">
+                  <h3 class="h6">Payment Method</h3>
+                  <p> <%=orders[0].paymentMethod%> <br>
+                  Total: ₹ <%=orders[0].totalPrice%><span class="badge bg-success rounded-pill"><%=orders[0].paymentStatus%> </span></p>
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="h6">Billing address</h3>
+                  <address>
+                    <strong><%=address.addresses[0].name%></strong><br>
+                    <%=address.addresses[0].address%>,<%=address.addresses[0].locality%><br>
+                    <%=address.addresses[0].city%>,<%=address.addresses[0].state%>,<%=address.addresses[0].pincode%><br>
+                    <i class="fa fa-phone" aria-hidden="true"></i><%=address.addresses[0].mobileNumber%>
+                  </address>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <!-- Shipping information -->
+            <div class="card-body">
+              <h3 class="h6">Shipping Information</h3>
+              <hr>
+              <h3 class="h6">Address</h3>
+              <address>
+                <strong><%=address.addresses[0].name%></strong><br>
+                <%=address.addresses[0].address%>,<%=address.addresses[0].locality%><br>
+                <%=address.addresses[0].city%>,<%=address.addresses[0].state%>,<%=address.addresses[0].pincode%><br>
+                <i class="fa fa-phone" aria-hidden="true"></i><%=address.addresses[0].mobileNumber%>
+              </address>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+      </div>
+      </div>
+      <!--include Footer-->
+<%- include('../partial/_userFooter')%>
+<!--include /Footer-->

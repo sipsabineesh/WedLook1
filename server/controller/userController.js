@@ -10,12 +10,12 @@ const secret = process.env.JWT_SECRET;
 //create and save new user
 exports.create=(req,res) => { 
     //validate request
-    // const errors= validationResult(req);
-    // if(!errors.isEmpty()){
-    //   var errMsg= errors.mapped();
-    //   var inputData = matchedData(req);  
-    //  }else{
-    //     var inputData = matchedData(req);  
+    const errors= validationResult(req);
+    if(!errors.isEmpty()){
+      var errMsg= errors.mapped();
+      var inputData = matchedData(req);  
+     }else{
+        var inputData = matchedData(req);  
     //    // insert query will be written here
     //new user
     const user = new User({
@@ -46,7 +46,7 @@ exports.create=(req,res) => {
     })
   })
  })
-// }
+ }
 
 }
 
@@ -95,34 +95,24 @@ exports.update=(req,res) => {
    //middleware 
  
 
-
-
-   exports.login=(async(req,res) => {
+exports.login=(async(req,res) => {
    var errMsg="";
    try {
        // check if the user exists
        const user = await User.findOne({ email: req.body.email});
-       const blocked = user.blocked
-       if (user && blocked === false) {
+ 
+       if (user && !user.blocked) {
          //check if password matches
                bcrypt.compare(req.body.password, user.password, function (err, result) { 
                if (result == true) {
                     if(req.body.email === "admin@gmail.com"){
                         req.session.adminLoggedIn = true
                         req.session.user = user
-                        res.render('admin/dashboard');
+                        res.redirect('/admin/dashboard');
                     }else{ 
-                       req.session.loggedIn = true
-                       req.session.user = user
-                       let resp = {
-                        email:user.email,
-                        password: user.password
-                       }
-                       let token = jwt.sign(resp,process.env.JWT_SECRET,{expiresIn:360})
-                       res.cookie.jwt=token
-                       console.log("RES.COOKIE:    ")
-                       console.log(res.cookie)
-                       res.redirect('/home')
+                        req.session.loggedIn = true
+                        req.session.user = user
+                        res.redirect('/home')
                    }
                } else {
                errMsg = "Incorrect password"
@@ -131,14 +121,12 @@ exports.update=(req,res) => {
                }
            });
        } else {
-         if(blocked === true)//res.status(400).json({ error: "User doesn't exist" });
-             errMsg = "Please contact the admin"
-         else 
-             errMsg = "Please enter valid email and password"
+             errMsg = "Please contact the Admin.You have been blocked by the Admin"
          res.render('user/login',{"errMsg":errMsg});
        }
      } catch (error) {
-       res.status(400).json({ error });
+        console.log(error.message)
+    //    res.status(400).json({ error });
      }
    })
    
@@ -321,7 +309,7 @@ exports.updateOTP=(async(req,res) => {
     return  Math.floor(Math.random()*10000);
    }
 
-   exports.find=(req,res) => {
+   exports.find=async (req,res) => {
     if(req.params.id){
         const id = req.params.id
         User.findById(id)
@@ -338,14 +326,57 @@ exports.updateOTP=(async(req,res) => {
               })
      }
      else {
-        User.find()
-        .then(user => {
-          //res.send(user) 
-          res.render('admin/view-user',{user})
-  })
-        .catch(err => {
-          res.status(500).send({message:err.message||"Error occured while retrieving data"})
-  })
+        const defaultPerPage = 10;
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || defaultPerPage; 
+        const skip = (page - 1) * limit;
+         const selectedFilter = req.query.filter || 'all';
+        // const productNameSearch = req.query.productNameSearch || '';
+        console.log("----------------------------------"+selectedFilter)
+        let totalCountQuery = User.find();
+
+        if (selectedFilter === 'blocked') {
+          totalCountQuery = totalCountQuery.where('block').equals(true);
+        } else if (selectedFilter === 'unblocked') {
+          totalCountQuery = totalCountQuery.where('block').equals(false);
+        }
+       
+        const totalUsers = await totalCountQuery.countDocuments();
+        const startSerialNumber = (page - 1) * limit + 1;
+        // const searchPattern = new RegExp(`.*${productNameSearch}.*`, 'i');
+
+        let usersQuery = User.find();
+        // if (productNameSearch) {
+        //     productsQuery = productsQuery.where('productName').regex(searchPattern);
+        // }
+        if (selectedFilter === 'blocked') {
+            usersQuery = usersQuery.where('blocked').equals(true);
+          } else if (selectedFilter === 'unblocked') {
+            usersQuery = usersQuery.where('blocked').equals(false);
+          }
+          
+          const user = await usersQuery
+            .skip(skip)
+            .limit(limit)
+            .exec();
+        
+        res.render('admin/view-user', {
+          user,
+          currentPage: page,
+          pages: Math.ceil(totalUsers / limit),
+          startSerialNumber:startSerialNumber,
+          selectedLimit:limit,
+          selectedFilter:selectedFilter,
+        //   productNameSearch:productNameSearch
+        });
+//         User.find()
+//         .then(user => {
+//           //res.send(user) 
+//           res.render('admin/view-user',{user})
+//   })
+//         .catch(err => {
+//           res.status(500).send({message:err.message||"Error occured while retrieving data"})
+//   })
      }
   
 } 
@@ -353,7 +384,7 @@ exports.updateOTP=(async(req,res) => {
 
 
 //update block or unblock by user id and save user
-exports.blockUnblock=(req,res) => {
+exports.blockUnblock=(req,res) => { console.log("BLOCK UNBLOCK FN")
     if(!req.body){
            return res
            .status(400)
@@ -362,12 +393,13 @@ exports.blockUnblock=(req,res) => {
    
      const id = req.params.id
      const action = req.params.action
+console.log("Action           =====  "+action)     
      var params = {}
-     console.log("ACTION  "+action)
      if(action === 'block')
       params = { blocked : true }
      else
       params = { blocked : false }
+console.log("params           =====  "+params.blocked)     
       
      User.findByIdAndUpdate(id,params,{useFindAndModify:false})
     .then(data =>{
@@ -383,7 +415,3 @@ exports.blockUnblock=(req,res) => {
     })
    }
 
-   
-   
-   
-  

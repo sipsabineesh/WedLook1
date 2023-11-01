@@ -1,0 +1,107 @@
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<style>
+ .section-border {
+            max-width: 1200px;
+            min-height: 70vh;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+</style>
+<div class="container">
+    <h1><span style="text-indent: 20px;">Orders</span></h1>
+    <hr>
+    <h3><span style="text-indent: 20px;">Your Orders</span></h3>
+    <hr>
+    <div class="section-border">
+     
+     
+    <% if (orders.length === 0) { %>
+        <p>No orders to display.</p>
+    <% } else { %>
+        <section class="intro">
+            <div class="gradient-custom-1 h-100">
+              <div class="mask d-flex align-items-center h-100">
+                <div class="container">
+                  <div class="row justify-content-center">
+                    <div class="col-12">
+                      <div class="table-responsive bg-white">
+                        <table class="table mb-0">
+                          <thead>
+                            <tr>
+                              <th scope="col">Sl No.</th>
+                              <th scope="col">Date</th>
+                              <th scope="col">Status</th>
+                              <th scope="col">Total</th>
+                              <th scope="col">Action</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% orders.forEach(function(order,index) {%>
+                            <tr>
+                              <td><%=index+1%></th>
+                              <td><%=order.orders.createdAt.toLocaleString()%></td>
+                              <td><%=order.orders.orderStatus%></td>
+                              <td>₹<%=order.orders.totalPrice%></td>
+                              <td><a href="/order-details?id=<%=order.orders._id%>" class="btns">View</a>
+                                <%if(order.orders.orderStatus=='Placed'){%>
+                                  <a href="" onclick="cancelOrder('<%=order.orders._id%>','Cancel Requested')" class="btns">Cancel</a>
+                                <%}else if(order.orders.orderStatus=='Delivered'){%>
+                                   <a href="" onclick="cancelOrder('<%=order.orders._id%>','Return Requested')" class="btns">Return</a>
+                                <%}%>
+                  
+                              </td>
+                              <td></td>
+                            </tr>   
+                              <% }) %>
+                        </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+    <% } %> 
+  
+
+  </div>
+        </div>
+
+
+        
+  
+    <!-- Add pagination controls or other UI elements as needed -->
+
+ 
+<!--include Footer-->
+<%- include('../partial/_userFooter')%>
+<!--include /Footer-->
+<script>
+ function cancelOrder(orderId,status){
+  var  request = {
+       "url":`http://localhost:3000/cancel-order`,
+       "method":'PUT',
+       "data":{
+        "orderId" : orderId,
+        "status"  : status
+       }
+     }
+
+   $.ajax(request).done(function(response){
+       var address = document.getElementById("toast");
+       address.classList.add("show");
+       address.innerHTML = '<i class="fa-solid fa-address-book"></i>Address Updated';
+       setTimeout(function(){
+       address.classList.remove("show");
+   }, 3000);
+   })
+ }
+</script>

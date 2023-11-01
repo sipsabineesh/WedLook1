@@ -1,0 +1,159 @@
+
+<!--include Header-->
+<%- include('../partial/_adminHeader')%>
+<!--include /Header-->
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+<style>
+    .page-link{
+        background-color: #000;
+    }
+</style>
+   <div class="container">
+    <section class="content-main">
+        <div class="content-header">
+            <div>
+                <h2 class="content-title card-title">Order Details</h2>
+                <p>Details for Order ID: <%=orders[0]._id%></p>
+            </div>
+        </div>
+        <div class="card">
+            <header class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                        <span>
+                            <i class="material-icons md-calendar_today"></i> <b><%=orders[0].createdAt.toLocaleString()%></b>
+                        </span> <br>
+                        <small class="text-muted">Order ID: <%=orders[0]._id%></small>
+                    </div>
+                 
+                </div>
+            </header> <!-- card-header end// -->
+            <div class="card-body">
+                <div class="row mb-50 mt-20 order-info-wrap">
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="fa-solid fa-user-large"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Customer</h6>
+                                <p class="mb-1">
+                                    <%=orders[0].name%><br><%=address.email%>  <br><%=address.mobileNumber%>
+                                </p>
+                           
+                            </div>
+                        </article>
+                    </div> <!-- col// -->
+                    <!-- col// -->
+                    <div class="col-md-4">
+                        <article class="icontext align-items-start">
+                            <span class="icon icon-sm rounded-circle bg-primary-light">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </span>
+                            <div class="text">
+                                <h6 class="mb-1">Deliver to</h6>
+                                <p class="mb-1">
+                                    <%=address.address%><br>
+                                    <%=address.locality%> <br>
+                                    <%=address.city%> <br>
+                                    <%=address.pincode%> <br>
+                                    <%=address.state%>
+                                </p>
+                            </div>
+                        </article>
+                    </div> <!-- col// -->
+                </div> <!-- row // -->
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="40%">Product</th>
+                                        <th width="20%">Unit Price</th>
+                                        <th width="20%">Quantity</th>
+                                        <th width="20%" class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% products.forEach(function(product,index) {%>
+
+                                    <tr>
+                                        <td>
+                                            <a class="itemside" href="#">
+                                                <img src="/img/product-images/<%= product.productImage[0] %>" width="40" height="40" class="img-xs" alt="Item">
+                                                <div class="info"> <%=product.productName%> </div>
+                                            </a>
+                                        </td>
+                                        <td> ₹<%=product.productPrice%></td>
+                                        <td> <%=product.quantity%></td> 
+                                        <td class="text-end"> ₹<%= product.productPrice*product.quantity %> </td>
+                                    </tr>
+                                    <% }) %>
+
+                                
+                                
+                                
+                                    <tr>
+                                        <td colspan="4">
+                                            <article class="float-end">
+                                                <!-- <dl class="dlist">
+                                                    <dt>Coupon Code:</dt>
+                                                    <dd> <b class="h6"><%=orders[0].couponCode%></b> </dd>
+                                                </dl> -->
+                                                <!-- <dl class="dlist">
+                                                    <dt>Discount Percentage:</dt>
+                                                    <dd> <b class="h6"><%=orders[0].discountPercentage+' % '%></b> </dd>
+                                                </dl>
+                                                <dl class="dlist">
+                                                    <dt>Discount Amount:</dt>
+                                                    <dd> <b class="h6"><%='- ₹ '+orders[0].discountAmount%></b> </dd>
+                                                </dl> -->
+                                            
+                                                <dl class="dlist">
+                                                  <dt> Grand total:</dt>
+                                                   <dd> <b class="h5">₹<%=orders[0].totalPrice%></b> </dd>
+                                                </dl>
+                                                <dl class="dlist">
+                                                   Status:
+                                                        <span class="badge rounded-pill alert-success text-success"><%=orders[0].paymentStatus%></span>
+                                                </dl>
+                                            </article>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> <!-- table-responsive// -->
+                    </div> <!-- col// -->
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-4">
+                        <%if(orders[0].paymentMethod == 'onlinePayment'){%>
+                        <div class="">
+                            <h6 class="mb-15">Payment info</h6>
+                            <p>
+                                Payment Method : Razorpay <br>
+
+                            </p>
+                            <p style="font-weight: bold;">Transaction Id : <%=orders[0].razorpayId%> </p>
+                        </div>
+                        <%}else{%>
+                            <div class="">
+                                <h6 class="mb-15">Payment info</h6>
+                                <p>
+                                    Payment Method : <%=orders[0].paymentMethod.toUpperCase()%> <br>
+                                  
+                                </p>
+                            </div>
+                            <%}%>
+                     
+                    </div> <!-- col// -->
+                </div>
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+    </section> <!-- content-main end// -->
+   </div>     
+  
+       <!--include Footer-->
+       <%- include('../partial/_adminFooter')%>
+       <!--include /Footer--> 
+  

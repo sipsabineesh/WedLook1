@@ -1,0 +1,74 @@
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<style>
+ .section-border {
+            max-width: 1200px;
+            min-height: 70vh;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+</style>
+<div class="container">
+    <h1><span style="text-indent: 20px;">Wallet Transactions</span></h1>
+    <hr>
+    <h3><span style="text-indent: 20px;">Your Wallet Transactions</span></h3>
+    <hr>
+    <div class="section-border">
+     
+     
+    <% if (wallet.length === 0) { %>
+        <p>No Wallet Transactions to display.</p>
+    <% } else { %>
+        <section class="intro">
+            <div class="gradient-custom-1 h-100">
+              <div class="mask d-flex align-items-center h-100">
+                <div class="container">
+                  <div class="row justify-content-center">
+                    <div class="col-12">  
+                      <div class="table-responsive bg-white">Wallet Balance : <%= wallet[0].wallet%>
+                        <table class="table mb-0">
+                          <thead>
+                            <tr>
+                                <th>Sl No</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Transaction type</th>
+                                <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <% wallet.forEach(function(wallet,index) {%>
+                                <tr>
+                                    <td><%=index+1%></td>
+                                    <td><%=wallet.walletTransaction.date.toLocaleString()%></td>
+                                    <td>₹ <%=wallet.walletTransaction.amount%></td>
+                                    <%if(wallet.walletTransaction.type=="Credit"){%>
+                                    <td><span class="label label-success"><%=wallet.walletTransaction.type%></span></td>
+                                    <%}else{%>
+                                    <td><span class="label label-danger"><%=wallet.walletTransaction.type%></span></td>
+                                    <%}%>
+                                </tr>
+                                <% }) %>
+                        </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+    <% } %> 
+  
+
+  </div>
+        </div>
+ 
+<!--include Footer-->
+<%- include('../partial/_userFooter')%>
+<!--include /Footer-->

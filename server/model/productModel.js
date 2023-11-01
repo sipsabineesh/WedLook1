@@ -23,9 +23,9 @@ var productSchema = new mongoose.Schema({
     productImage: {
         type: Array,
     },
-    date: {
+    createdAt: {
         type: Date,
-        //default: Date.now,
+        default: Date.now,
       }
 })
 

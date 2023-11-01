@@ -68,13 +68,14 @@
                  <ul class="navbar-nav ml-auto"> 
                    <li class="nav-item ml-2"><a class="nav-link" href="/home">Home</a> </li>
                    <li class="nav-item ml-2"> <a class="nav-link" href="/view-categories">Products</a> </li>
+                   <% if(user){%>
                    <li class="nav-item ml-2"> <a class="nav-link" href="/view-wishlist">WishList</a> </li> 
                    <li class="nav-item ml-2"> <a class="nav-link" href="/view-cart">Cart</a> </li> 
-                   <li class="nav-item ml-2"> <a class="nav-link" href="#">Orders</a> </li> 
+                   <li class="nav-item ml-2"> <a class="nav-link" href="/view-orders">Orders</a> </li> 
                 </ul>
                 <ul class="navbar-nav ml-auto"> 
-                    <% if(user){%>
-                        <li class="nav-item ml-2"> <a class="nav-link" href="#"> <i class="fa-solid fa-user"></i> </a> </li> 
+              
+                        <li class="nav-item ml-2"> <a class="nav-link" href="/user-profile"> <i class="fa-solid fa-user"></i> </a> </li> 
                         <li class="nav-item ml-2"> <a class="nav-link" href="/logout"> <i class="fa-solid fa-power-off"></i> </a> </li> 
                     <%} else { %>
                         <li class="nav-item ml-2"> <a class="nav-link" href="/login"> <i class="fa-solid fa-power-off"></i> </a> </li> 

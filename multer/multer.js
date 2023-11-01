@@ -24,6 +24,6 @@ const storage = multer.diskStorage({
 
   module.exports = {
     upload: multer({ storage: storage }).array("image"),
-    update: multer({ storage: storage }).array("images"),
+    update: multer({ storage: storage }).array("image"),
     bupload: multer({ storage: addBanner }).array("image"),
   }

@@ -1,13 +1,71 @@
 <!--include Header-->
 <%- include('../partial/_adminHeader')%>
 <!--include /Header-->
+<style>
+#toast, #toast-cart{
+  padding: 10px;
+  padding-left: 5px;
+  position: fixed;
+  width: 230px;
+  height: 50px;
+  top: 0;
+  left: 80%;
+  transform:translate(-50%);
+  background-color: #EFF2FF;
+  color: #76777E;
+  padding: 1px;
+  border-radius: 8px;
+  text-align:center;
+  z-index: 99999;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  visibility: hidden;
+  opacity: 0;-ms-display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+#toast.show, #toast-cart.show{
+  visibility:visible;
+  animation:fadeInOut 3s;
+}
+
+@keyframes fadeInOut{
+  5%,95%{opacity:1;top:50px}
+  15%,85%{opacity:1;top:30px}
+}
+#productNameErr{
+  color:#fd0505
+}
+/* Add this CSS to your existing styles or in a separate CSS file */
+.image-preview-item {
+  display: inline-block; /* Display items in a horizontal row */
+  text-align: center;
+  margin-right: 10px; /* Add some spacing between items */
+}
+
+.image-preview-item img {
+  max-width: 100px; 
+  height: 100px;
+}
+
+.delete-icon {
+  color: red;
+  cursor: pointer;
+  display: block;
+  margin-top: 5px;
+}
+
+
+</style>
 <!--Main Section-->
 <main id="site-main">
     <div class="container">
+      <div id="toast" class="toast"></div>
       <div class="col-md-12">
         <div class="box-nav d-flex-justify-between">
           <div class="filter">
-                <a href="/admin/view-product"><i class=" fas fa-angle-double-left"></i>All Product</a>
+                <a href="/admin/view-product"><i class=" fas fa-angle-double-left"></i>All Products</a>
           </div>
         </div>
         <div class="form-title text-center">
@@ -15,11 +73,12 @@
             <span class="text-light">Create a new product using the form below</span>
         </div>
         <!--Form Handling-->
-        <form action="/admin/add-product" method="POST"  class="product-form" enctype="multipart/form-data">
+        <form action="/admin/add-product" method="POST" id="add-product-form" class="product-form" enctype="multipart/form-data">
             <div class="form-group row  mt-3">
               <label for="productName" class="col-sm-2 col-form-label">Name</label>
               <div class="col-md-4">
                 <input type="text"  class="form-control" id="productName" name="productName">
+                <span id="nameError"></span><span id="productNameErr"><%= message %></span>
               </div>
                 <label for="productCategory" class="col-sm-2 col-form-label">Category</label>
               <div class="col-md-4">
@@ -31,6 +90,7 @@
                   </option>
                   <% }); %>
                </select>
+               <span id="categoryError"></span>
                 </div>
               </div>
            </div>
@@ -39,26 +99,38 @@
               <label for="productStock" class="col-sm-2 col-form-label">Stock</label>
               <div class="col-md-4">
                 <input type="text"  class="form-control" id="productStock" name="productStock">
+                <span id="stockError"></span>
               </div>
               <label for="productPrice" class="col-sm-2 col-form-label">Price</label>
               <div class="col-md-4">
                 <div class="form-group">
                   <input type="text"  class="form-control" id="productPrice" name="productPrice">
+                  <span id="priceError"></span>
               </div>
            </div>
             </div>
             <div class="form-group row  mt-3">
-              <label for="productImage" class="col-sm-2 col-form-label">Image</label>
+
+              <label for="productImage" class="col-sm-2 col-form-label">Images</label>
               <div class="col-md-4">
-                <input type="file"  class="form-control" id="productImage" name="image">
+                <input type="file" class="form-control" id="productImage" name="image" multiple>
+                <span id="imageError"></span>
               </div>
+              
+                <div id="image-preview-container" class="mt-3">
+                  <!-- Image preview items will be added here -->
+                </div>
               <label for="productDescription" class="col-sm-2 col-form-label">Description</label>
               <div class="col-md-4">
                 <div class="form-group">
-							  	   <textarea placeholder="" class="form-control" style="width:100%; height:120px" name="productDescription" required="required"></textarea>
+							  	   <textarea placeholder="" class="form-control" style="width:100%; height:120px" id="productDescription" name="productDescription"></textarea>
+                     <span id="descriptionError"></span>
               </div>
            </div>
             </div>
+
+
+
             <div class="form-group row mt-3">
                 <div class="col-sm-10 ml-5">
                   <input type="submit" class="btns saveBtn" value="Save">
@@ -75,3 +147,235 @@
 <!--include Footer-->
 <%- include('../partial/_adminFooter')%>
 <!--include /Footer-->
+<script>
+  const thisForm = document.getElementById("add-product-form")
+
+  const name = document.getElementById("productName")
+  const description = document.getElementById("productDescription")
+  const price = document.getElementById("productPrice")
+  const stock = document.getElementById("productStock")
+  const category = document.getElementById("productCategory");
+  const image = document.getElementById("productImage");
+
+
+  const nameError = document.getElementById("nameError")
+  const descriptionError = document.getElementById("descriptionError")
+  const priceError = document.getElementById("priceError")
+  const stockError = document.getElementById("stockError")
+  const categoryError = document.getElementById("categoryError");
+  const imageError = document.getElementById("imageError");  
+
+  function isNumeric(inputValue) {
+  // Use a regular expression to match only numeric characters (0-9)
+  const numericPattern = /^[0-9]+$/;
+  return numericPattern.test(inputValue);
+}
+
+
+
+function nameValidation(){
+const nameValue = name.value
+if(nameValue.trim()==0){
+  nameError.innerHTML = 'Product title is required'
+  nameError.style.color = 'red'
+  name.style.border = "solid 2px red";
+  return false;
+}
+nameError.innerHTML = ""
+nameError.style.color = "green"
+name.style.border = "solid 2px green";
+return true
+  
+}
+
+function categoryValidation(){
+  if (category.value === "Choose one") {
+    categoryError.innerHTML = "Please select a category."; 
+    categoryError.style.color = 'red'
+    category.style.border = "solid 2px red";
+    return false
+  } else {
+    categoryError.innerHTML = "";
+    categoryError.style.color = 'green'
+    category.style.border = "solid 2px green";
+    return true
+}
+}
+
+function imageValidation(){
+  if (image.files.length === 0) {
+    imageError.innerHTML = "Please select image for the product."; 
+    imageError.style.color = 'red'
+    image.style.border = "solid 2px red";
+    return false
+  } else if (image.files.length > 5) {
+    imageError.innerHTML = "Only 5 images are allowed"; 
+    imageError.style.color = 'red'
+    image.style.border = "solid 2px red";
+    return false
+  }
+  else {
+    imageError.innerHTML = "";
+    imageError.style.color = 'green'
+    image.style.border = "solid 2px green";
+    return true
+}
+}
+
+function descriptionValidation(){
+const descriptionValue = description.value
+if(descriptionValue.trim()==0){
+  descriptionError.innerHTML = 'Descripion is required'
+  descriptionError.style.color = 'red'
+  description.style.border = "solid 2px red";
+  return false;
+}
+descriptionError.innerHTML = ""
+descriptionError.style.color = "green"
+description.style.border = "solid 2px green";
+return true
+ 
+}
+
+function priceValidation(){
+const priceValue = price.value
+if(priceValue.trim()==0){
+  priceError.innerHTML = 'Price is Required'
+  priceError.style.color = 'red'
+  price.style.border = "solid 2px red";
+  return false;
+}
+if(priceValue <= 0 ){
+  priceError.innerHTML = 'Price Must be greater than zero'
+  priceError.style.color = 'red'
+  price.style.border = "solid 2px red";
+  return false;
+}
+
+if (!isNumeric(priceValue)) {
+  priceError.innerHTML = 'Price Must be a Number'
+  priceError.style.color = 'red'
+  price.style.border = "solid 2px red";
+  return false;
+  }
+
+priceError.innerHTML = ""
+priceError.style.color = "green"
+price.style.border = "solid 2px green";
+return true
+ 
+}
+
+function stockValidation(){
+const stockValue = stock.value
+if(stockValue.trim()==0){
+  stockError.innerHTML = 'Stock is Required'
+  stockError.style.color = 'red'
+  stock.style.border = "solid 2px red";
+  return false;
+}
+if(stockValue <  0 ){
+  stockError.innerHTML = 'Stock Must be greater than or equal to zero'
+  stockError.style.color = 'red'
+  stock.style.border = "solid 2px red";
+  return false;
+}
+if (!isNumeric(stockValue)) {
+  stockError.innerHTML = 'Stock Must be a Number'
+  stockError.style.color = 'red'
+  stock.style.border = "solid 2px red";
+  return false;
+  }
+stockError.innerHTML = ""
+stockError.style.color = "green"
+stock.style.border = "solid 2px green";
+return true
+}
+
+thisForm.addEventListener("submit",(event)=>{
+event.preventDefault();
+if(!nameValidation()  || !categoryValidation() || !stockValidation()|| ! priceValidation() || !imageValidation() || !descriptionValidation()) {
+  return false
+}else{
+  thisForm.submit()
+}
+})
+</script>
+<script>
+ // Add this JavaScript code to your existing script
+const imagesInput = document.getElementById('productImage');
+const imagePreviewContainer = document.getElementById('image-preview-container');
+
+imagesInput.addEventListener('change', (event) => {
+  imagePreviewContainer.innerHTML = ''; // Clear previous previews
+
+  const files = event.target.files;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const imagePreviewItem = document.createElement('div');
+    imagePreviewItem.classList.add('image-preview-item');
+
+    const imageElement = document.createElement('img');
+    imageElement.src = URL.createObjectURL(file);
+
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fas', 'fa-trash', 'delete-icon');
+    deleteIcon.setAttribute('data-file-index', i); // Store the file index
+    deleteIcon.addEventListener('click', removeImage);
+
+    // Append the image and delete icon to the item div
+    imagePreviewItem.appendChild(imageElement);
+    imagePreviewItem.appendChild(deleteIcon);
+
+    imagePreviewContainer.appendChild(imagePreviewItem);
+  }
+});
+
+
+
+function removeImage(event) {
+  const fileIndex = event.target.getAttribute('data-file-index');
+  const files = Array.from(imagesInput.files); // Convert FileList to an array
+  
+ 
+  // Remove the image from the array
+  if (fileIndex >= 0 && fileIndex < files.length) { 
+    files.splice(fileIndex, 1);
+
+    // Clear the input element's files
+     imagesInput.value = null;
+
+    // Remove the image preview item from the container
+    event.target.parentElement.remove();
+
+    // Update the image list in the EJS template
+    updateImageList(files);
+  }
+}
+
+function updateImageList(files) {
+  const imageListContainer = document.getElementById('image-preview-container');
+  imageListContainer.innerHTML = ''; // Clear previous images
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const imagePreviewItem = document.createElement('div');
+    imagePreviewItem.classList.add('image-preview-item');
+
+    const imageElement = document.createElement('img');
+    imageElement.src = URL.createObjectURL(file);
+
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fas', 'fa-trash', 'delete-icon');
+    deleteIcon.setAttribute('data-file-index', i); // Store the file index
+    deleteIcon.addEventListener('click', removeImage);
+
+    // Append the image and delete icon to the item div
+    imagePreviewItem.appendChild(imageElement);
+    imagePreviewItem.appendChild(deleteIcon);
+
+    imageListContainer.appendChild(imagePreviewItem);
+  }
+}
+
+</script>

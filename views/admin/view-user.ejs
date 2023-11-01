@@ -1,6 +1,40 @@
 <!--include Header-->
     <%- include('../partial/_adminHeader')%>
 <!--include /Header-->
+<style>
+#toast{
+    padding: 10px;
+    padding-left: 5px;
+    position: fixed;
+    width: 230px;
+    height: 50px;
+    top: 0;
+    left: 80%;
+    transform:translate(-50%);
+    background-color: #EFF2FF;
+    color: #76777E;
+    padding: 1px;
+    border-radius: 8px;
+    text-align:center;
+    z-index: 99999;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    visibility: hidden;
+    opacity: 0;-ms-display: flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  #toast.show{
+    visibility:visible;
+    animation:fadeInOut 3s;
+  }
+  
+  @keyframes fadeInOut{
+    5%,95%{opacity:1;top:50px}
+    15%,85%{opacity:1;top:30px}
+  }
+  </style>
 <!--Main Section-->
 <main id="site-main">
     <div class="container">
@@ -9,8 +43,65 @@
                 <span class="text-gradient">New User<i class="fa-solid fa-user"></i></span>
             </a>
         </div> -->
-        <!--Form Handling-->
+        <!--Form Handling--> 
+          <div class="row align-items-center">
+            <!-- Limit Selection Dropdown Column -->
+            <div class="col-md-3">
+                <div class="form-group">
+                  <form action="/admin/view-user" method="get">
+                  <label for="limitSelect">Items per page:</label>
+                  <select class="form-control" id="limitSelect" name="limit" onchange="this.form.submit()">
+                    <option value="5" <%= selectedLimit === 5 ? 'selected' : '' %>>5</option>
+                    <option value="10" <%= selectedLimit === 10 ? 'selected' : '' %>>10</option>
+                    <option value="20" <%= selectedLimit === 20 ? 'selected' : '' %>>20</option>
+                  </select>
+                  </form>
+                </div>
+              </div>
+            
+              <!-- Pagination Column -->
+              <div class="col-md-6">
+                <div class="pagination-container">
+                  <ul class="pagination">
+                      <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                      <% } %>
+                  
+                      <% for (let i = 1; i <= pages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                          <a class="page-link" href="?page=<%= i %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>"><%= i %></a>
+                        </li>
+                      <% } %>
+                  
+                      <% if (currentPage < pages) { %>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                      <% } %>
+                    </ul>
+                </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <form action="/admin/view-user" method="get">
+                    <label for="filterSelect">User Status:</label>
+                    <select class="form-control" id="filterSelect" name="filter" onchange="this.form.submit()">
+                      <option value="" <%= selectedFilter === "all" ? 'selected' : '' %>>All Users</option>
+                      <option value="blocked" <%= selectedFilter === "blocked" ? 'selected' : '' %>>Blocked Users</option>
+                      <option value="unblocked" <%= selectedFilter === "unblocked" ? 'selected' : '' %>>Unblocked Users</option>
+                    </select>
+                    </form>
+                  </div>
+                </div>
+            </div>
         <form id="product-list">
+            <div id="toast"></div>
             <table class="table">
                 <thead class="thead-dark">
                     <tr>
@@ -23,14 +114,92 @@
                 </thead>
                 <tbody>
               <!--include show-->
-                <%- include('../partial/_showUser')%>
+                <!-- <%- include('../partial/_showUser')%> -->
+                <% for (var i=0; i < user.length;i++) {%>
+                    <tr>
+                        <td><%= startSerialNumber + i %></td>
+                        <td><%= user[i].name%></td>
+                        <td><%= user[i].email%></td>
+                        <td><%= user[i].phoneNumber%></td>
+                        <td class="user-blocked-status"><input type="hidden" id="user-blocked-status-hidden" value="<%= user[i].blocked%>">
+                            <% if(user[i].blocked === true) {%>
+                                <a href=""  id="<%= user[i]._id%>"  class="btn action-btn border-shadow user-blocked">
+                                    <span class="text-gradient"><i class="fa-solid fa-lock"></i></span>
+                                </a>
+                            <%} else {%>
+                                <a  href=""  id="<%= user[i]._id%>"  class="btn action-btn border-shadow user-unblocked">
+                                    <span class="text-gradient"><i class="fa-solid fa-lock-open"></i></span>
+                                </a>
+                            <% } %>
+                        </td>
+                        <!-- <td>
+                            <button class="block-user" data-id="<%= user[i]._id %>">Block</button>
+                            <button class="unblock-user" data-id="<%= user[i]._id %>">Unblock</button>
+                          </td> -->
+                    </tr>
+                <%}%>
               <!--include /show-->
               <tbody>
             </table>
         </form>
 
         <!--/Form Handling-->
-
+        <div class="row align-items-center">
+            <!-- Limit Selection Dropdown Column -->
+            <div class="col-md-3">
+                <div class="form-group">
+                  <form action="/admin/view-user" method="get">
+                  <label for="limitSelect">Items per page:</label>
+                  <select class="form-control" id="limitSelect" name="limit" onchange="this.form.submit()">
+                    <option value="5" <%= selectedLimit === 5 ? 'selected' : '' %>>5</option>
+                    <option value="10" <%= selectedLimit === 10 ? 'selected' : '' %>>10</option>
+                    <option value="20" <%= selectedLimit === 20 ? 'selected' : '' %>>20</option>
+                  </select>
+                  </form>
+                </div>
+              </div>
+            
+              <!-- Pagination Column -->
+              <div class="col-md-6">
+                <div class="pagination-container">
+                  <ul class="pagination">
+                      <% if (currentPage > 1) { %>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                          </a>
+                        </li>
+                      <% } %>
+                  
+                      <% for (let i = 1; i <= pages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                          <a class="page-link" href="?page=<%= i %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>"><%= i %></a>
+                        </li>
+                      <% } %>
+                  
+                      <% if (currentPage < pages) { %>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&filter=<%= selectedFilter %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                          </a>
+                        </li>
+                      <% } %>
+                    </ul>
+                </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <form action="/admin/view-user" method="get">
+                    <label for="filterSelect">User Status:</label>
+                    <select class="form-control" id="filterSelect" name="filter" onchange="this.form.submit()">
+                      <option value="" <%= selectedFilter === "all" ? 'selected' : '' %>>All Users</option>
+                      <option value="blocked" <%= selectedFilter === "blocked" ? 'selected' : '' %>>Blocked Users</option>
+                      <option value="unblocked" <%= selectedFilter === "unblocked" ? 'selected' : '' %>>Unblocked Users</option>
+                    </select>
+                    </form>
+                  </div>
+                </div>
+            </div>
     </div>
 </main>
 <!--/Main Section-->

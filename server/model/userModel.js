@@ -110,7 +110,17 @@ var userSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now,
-      }
+      },
+    wallet:{
+        type:Number,
+        default:0
+    },
+    walletTransaction:{
+        type:Array
+    },
+    coupons:{
+        type:Array,
+    }
 })
 
 

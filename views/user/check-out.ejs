@@ -1,39 +1,714 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+<!-- include Header-->
+<%- include('../partial/_userHeader')%>
+<!--include /Header -->
+<style>
+	.payment-option {
+    margin: 10px 0;
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.auto-height {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow-y: auto; 
+}
+
+#toast, #toast-order,#toast-coupon{
+ padding: 10px;
+  padding-left: 5px;
+  position: fixed;
+  width: 230px;
+  height: 50px;
+  top: 50%;
+  left: 80%;
+  transform:translate(-50%);
+  background-color: #EFF2FF;
+  color: #76777E;
+  padding: 1px;
+  border-radius: 8px;
+  text-align:center;
+  z-index: 99999;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  visibility: visible;
+  opacity: 0;-ms-display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px; 
+}
+#toast.show, #toast-order.show,#toast-coupon.show {
+  visibility:visible;
+  animation:fadeInOut 3s;
+}
+
+@keyframes fadeInOut{
+  5%,95%{opacity:1;top:50px}
+  15%,85%{opacity:1;top:30px}
+}
+
+.modal {
+  display: none; /* Hide the modal by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background overlay */
+  z-index: 1;
+  overflow: auto;
+}
+
+/* Styles for the modal content */
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+}
+
+.close {
+  color: #888;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.product-list ,.order-list{
+	list-style-type: none;
+}
+
+.product-list ,.order-list li{
+	list-style-type: none;
+	color:#424040;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1;
+}
+.address-button p{
+	color:#424040;
+}
+</style>
+<section id="check-out" class="check-out section_padding cover-bg">
     <div class="container">
-        <h1>Checkout</h1>
-        <form action="process_checkout.php" method="post">
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="address">Shipping Address</label>
-                <textarea id="address" name="address" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="payment_method">Payment Method</label>
-                <select id="payment_method" name="payment_method" required>
-                    <option value="cash_on_delivery">Cash on Delivery</option>
-                    <option value="online_payment">Online Payment</option>
-                </select>
-            </div>
-            <div id="payment_details" class="form-group">
-                <!-- Payment details fields (e.g., credit card info) can be dynamically added here based on the selected payment method using JavaScript -->
-            </div>
-            <button type="submit">Place Order</button>
-        </form>
-    </div>
-</body>
-</html>
+		
+		<h3><span style="text-indent: 20px;">Check Out</span></h3>
+		<hr>
+		<div class="row">
+		<div id="toast"></div>
+		<div id="toast-order"></div>
+		<div id="toast-coupon"></div>
+
+		   <div class="col-md-9">
+			<% if (activeAddress && activeAddress.length > 0) { %>
+				<!-- Iterate through the 'addresses' array if it exists -->
+				<% activeAddress.forEach(function(shippingAddress) { %>
+		      	<div class="address-form section-border ">
+					 <form id="edit-address">
+						<h4>Address Details</h4>
+						 <div class="row address-inner-container">
+						 	  <div class="col-md-6">
+								Name
+							  	   <div class="form-group">
+								   		<input type="hidden" name="id" value="<%= shippingAddress.addresses._id%>">
+								   		<input type="text" name="name" placeholder="Full name (First and Last name)" value="<%= shippingAddress.addresses.name%>" required="required">
+								   </div>
+							  </div>
+							   <div class="col-md-6">
+								Email
+							  	   <div class="form-group">
+								   		<input type="email" name="email" placeholder="Email" value="<%= shippingAddress.addresses.email%>" required="required">
+								   </div>
+							  </div>
+							  <div class="col-md-6">
+								Address
+								<div class="form-group">
+									  <input type="text" name="address" placeholder="Flat, House no., Building, Company, Apartment" value="<%= shippingAddress.addresses.address%>" required="required">
+							    </div>
+						     </div>
+						     <div class="col-md-6">
+							    Locality
+							 <div class="form-group">
+								  <input type="text" name="locality" placeholder="" value="<%= shippingAddress.addresses.locality%>" required="required">
+						  </div>
+					 </div>
+						  <div class="col-md-6">
+							City
+								<div class="form-group">
+									  <input type="text" name="city" placeholder="Town/City" value="<%= shippingAddress.addresses.city%>" required="required">
+							  </div>
+						 </div>
+						 <div class="col-md-6">
+							State
+							<div class="form-group">
+								  <input type="text" name="state" placeholder="State" value="<%= shippingAddress.addresses.state%>" required="required">
+						  </div>
+					 </div>
+					  <div class="col-md-6">
+						Pin Code
+							<div class="form-group">
+								  <input type="text" name="pincode" placeholder="ZIP Code" value="<%= shippingAddress.addresses.pincode%>" required="required">
+						  </div>
+					 </div>
+					 <div class="col-md-6">
+						Phone Number
+						<div class="form-group">
+							  <input type="text" name="mobileNumber" placeholder="Phone Number" value="<%= shippingAddress.addresses.mobileNumber%>" required="required">
+					  </div>
+				 </div>
+     			   <div class="col-md-12">
+							  	  <button type="submit" class="btns">Edit Address</button>
+							  </div>
+						 </div>
+					 </form>
+				</div>
+
+				<% }); %>
+    <% } else { %>
+        <!-- Display a message if 'addresses' is null or empty -->
+        <p>No addresses found.</p>
+    <% } %>
+	<div class="col-md-12">
+		<button type="button" id="add-address" class="btns">Add New Address</button>
+		<button type="button" id="select-address" class="btns">Select Address</button>
+
+  </div>
+		   </div>
+		   
+		   <div class="col-md-3">
+			<div class="">
+				<div class="address-form order-details-form payment-method-form section-border auto-height"><h4>Your Order</h4>
+					<ul class="product-list">
+						<li><b>Product <span>Total</span></b></li>
+						<% cart.forEach(function(cart,index) {%>
+	
+						<li><%=cart.productName%> <span class="middle">x <%=cart.quantity%></span> <span class="last">₹<%= cart.productPrice %></span></li>
+						<% }) %>
+					</ul>
+					<ul class="order-list">
+	
+						<li>Subtotal <span id="subTotal">₹<%=totalPrice%></span></li>
+						<li>Discount  <span id="couponOffer"></span></li>
+	
+						<li>Total <span id="total">₹<%=totalPrice%></span></li>
+						<input type="hidden" name="discountPercentage" id="discountPercentage" value="0">
+						<input type="hidden" name="discountAmount" id="discountAmount" value="0">
+						<input type="hidden" name="total" value="<%= totalPrice%>" id="totalVal" >
+					
+					</ul>
+					<input type="hidden" id="finalTotal">
+					Have a coupon?
+					<div class="coupon_area">
+					   <input type="text" name="couponCode" id="couponCode">
+					   <a class="btns btn-dark" href="#"  onclick="applyCoupon('<%=totalPrice%>')" >Apply</a>
+					   <span id="couponErr"></span>
+					</div>
+			 
+				</div>
+					
+			</div>
+			
+		   <div class="col-md-6+">
+			<div class="payment-method-form section-border ">
+			  <form id="payment-method-form"  method="post">
+				<h4>Payment Method</h4>
+				<div class="row payment-inner-container">
+					<div class="col-md-3" > <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod"></div>
+					<div class="col-md-9" > <label class="form-check-label" for="cod">
+						Cash On Delivery
+					</label></div>
+
+				</div>
+				<div class="row">
+					<div class="col-md-3" > <input class="form-check-input" type="radio" name="paymentMethod" id="onlinePayment" value="onlinePayment"></div>
+					<div class="col-md-9" > <label class="form-check-label" for="onlinePayment">
+						Online Payment
+					</label></div>
+				
+					 </div>
+					 <div class="row">
+						<div class="col-md-3" > <input class="form-check-input" type="radio" name="paymentMethod" id="wallet" value="wallet"></div>
+						<div class="col-md-9" > <label class="form-check-label" for="wallet">
+							Wallet
+						</label></div>
+					
+						 </div>
+						 <input type="hidden" id="totalAmountAfterDiscount" name="totalAmountAfterDiscount" >
+					 <div class="row mt-3">
+						<div class="col-md-12">
+							<%if(activeAddress.length != 0){%>
+								<button id="place-order" type="submit" class="btns" onclick="proceedToPayment()">Place Order</button>
+							<%}else{%>
+								<button id="place-order" type="submit" class="btns" disabled>Place Order</button>
+							<%}%> 
+	
+					  </div> 
+					</div>
+				</div>
+				
+			 	
+			  </form>
+		 </div>
+		 </div>
+	</div>
+	
+	</div>
+		</div>
+		
+	</div>
+	<div id="addressListModal" class="modal">
+		<div class="modal-content">
+			<!-- Close button for the modal -->
+			<span class="close" id="closeSelectModal">&times;</span>
+			<h1 class="mb-4 mt-3">Your Addresses</h1>
+			<div class="row">
+				<% addresses.forEach((address, index) => { %>
+					<div class="col-md-6 mb-4">
+							<input type="hidden" value="<%= address._id%>">
+						<button class="address-button btn btn-light" onclick="setAddress('<%= address.addresses._id%>')" data-toggle="modal" data-target="#addressDetailsModal<%= index %>">
+							<input type="hidden" value="<%= address._id%>">
+							<h4><%= address.addresses.name %></h4>
+							<p><strong>Address:</strong> <%= address.addresses.address %></p>
+							<p><strong>Locality:</strong> <%= address.addresses.locality %></p>
+							<p><strong>City:</strong> <%= address.addresses.city %></p>
+							<p><strong>Pincode:</strong> <%= address.addresses.pincode %></p>
+							<p><strong>State:</strong> <%= address.addresses.state %></p>
+							<p><strong>Phone Number:</strong> <%= address.addresses.mobileNumber %></p>
+						</button>
+					</div>
+				<% }) %>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+
+	<div id="addressModal" class="modal">
+		<div class="modal-content">
+			<!-- Close button for the modal -->
+			<span class="close" id="closeModal">&times;</span>
+	
+			<!-- Address form -->
+			<form id="address-form" onsubmit="validateForm()">
+				<h4>Address Details</h4>
+				<div class="row address-inner-container">
+					<div class="col-md-6 mb-3">
+						<label for="name">Name</label>
+						<input type="hidden" name="user" value="<%= user._id%>">
+						<input type="text" class="form-control" id="name" name="name" placeholder="Full name (First and Last name)" required="required">
+						<div id="errMsgName" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="email">Email</label>
+						<input type="email" class="form-control" id="email" name="email" placeholder="Email" required="required">
+						<div id="errMsgEmail" class="errMsg"></div>
+					</div>
+					<div class="col-md-12 mb-3">
+						<label for="address">Address</label>
+						<input type="text" class="form-control" id="address" name="address" placeholder="Flat, House no., Building, Company, Apartment" required="required">
+						<div id="errMsgAddress" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="locality">Locality</label>
+						<input type="text" class="form-control" id="locality" name="locality" placeholder="Locality" required="required">
+						<div id="errMsgLocality" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="city">City</label>
+						<input type="text" class="form-control" id="city" name="city" placeholder="Town/City" required="required">
+						<div id="errMsgCity" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="state">State</label>
+						<input type="text" class="form-control" id="state" name="state" placeholder="State" required="required">
+						<div id="errMsgState" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="pincode">Pin Code</label>
+						<input type="text" class="form-control" id="pincode" name="pincode" placeholder="ZIP Code" required="required">
+						<div id="errMsgPincode" class="errMsg"></div>
+					</div>
+					<div class="col-md-6 mb-3">
+						<label for="mobileNumber">Phone Number</label>
+						<input type="text" class="form-control" id="mobileNumber" name="mobileNumber" placeholder="Phone Number" required="required">
+						<div id="errMsgMobileNumber" class="errMsg"></div>
+					</div>
+					<!-- <div class="col-md-6 mb-3">
+						<input type="checkbox" id="default-address" name="isActive">
+						<label for="default-address">Set As Default Address</label>
+					</div> -->
+					<div class="col-md-12">
+						<button type="submit" class="btns" onclick="validateForm()">Add</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	
+
+
+  </section>
+  
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const modal = document.getElementById('addressModal');
+const openModalBtn = document.getElementById('add-address');
+const closeModalBtn = document.getElementById('closeModal');
+const listModal = document.getElementById('addressListModal');
+const openListModalBtn = document.getElementById('select-address');
+const closeListModalBtn = document.getElementById('closeSelectModal');
+
+// Open the modal when the trigger button is clicked
+openModalBtn.addEventListener('click', () => {
+  modal.style.display = 'block';
+});
+
+// Close the modal when the close button (X) is clicked
+closeModalBtn.addEventListener('click', () => { 
+  modal.style.display = 'none';
+});
+
+// Open the modal when the trigger button is clicked
+openListModalBtn.addEventListener('click', () => {
+	listModal.style.display = 'block';
+});
+
+// Close the modal when the close button (X) is clicked
+closeListModalBtn.addEventListener('click', () => { 
+	listModal.style.display = 'none';
+});
+
+// Close the modal if the user clicks outside of it
+window.addEventListener('click', (event) => {
+  if (event.target == modal) {
+    modal.style.display = 'none';
+    listModal.style.display = 'none';
+  }
+});
+
+function setAddress(addressId){
+ var  request = {
+    "url":`http://localhost:3000/set-address/${addressId}`,
+    "method":'PUT'
+  }
+
+ $.ajax(request).done(function(response){
+    var list = document.getElementById("toast");
+    list.classList.add("show");
+    if(response === true) {
+      list.innerHTML = '<i class="fa-solid fa-address-book"></i> Address Changed';
+    }
+    setTimeout(function(){
+      list.classList.remove("show");
+    },3000);
+	location.reload();
+ })
+}
+
+function addAdress(){
+	var address = document.getElementById("toast");
+       address.classList.add("show");
+       address.innerHTML = '<i class="fa-solid fa-address-book"></i>Please Add Address';
+       setTimeout(function(){
+       address.classList.remove("show");
+   }, 3000);
+}
+
+   </script>
+   <script>
+   function validateForm() {
+	   const name = document.getElementById("name").value.trim();
+	   const email = document.getElementById("email").value.trim();
+	   const address = document.getElementById("address").value.trim();
+	   const city = document.getElementById("city").value.trim();
+	   const locality = document.getElementById("locality").value.trim();
+	   const pincode = document.getElementById("pincode").value.trim();
+	   const state = document.getElementById("state").value.trim();
+	   const mobileNumber = document.getElementById("mobileNumber").value.trim();
+
+	   document.getElementById("errMsgName").innerHTML = ""
+	   document.getElementById("errMsgEmail").innerHTML = ""
+	   document.getElementById("errMsgAddress").innerHTML = ""
+	   document.getElementById("errMsgLocality").innerHTML = ""
+	   document.getElementById("errMsgCity").innerHTML = ""
+	   document.getElementById("errMsgPincode").innerHTML = ""
+	   document.getElementById("errMsgState").innerHTML = ""
+	   document.getElementById("errMsgMobileNumber").innerHTML = ""
+
+
+ 
+	   // Check if the name is not empty
+	   if (name === "") {
+		   document.getElementById("errMsgName").innerHTML = "Please enter valid Name"
+		   return false;
+	   }
+ 
+	   // Check if the mobile number is a valid number with at least 10 digits
+	   if (email === "") {
+		   document.getElementById("errMsgEmail").innerHTML = "Please enter valid Emailid"
+		   return false;
+	   }
+ 
+	   // Check if the address is not empty
+	   if (address === "") {
+		   document.getElementById("errMsgAddress").innerHTML = "Please enter valid Address"
+		   return false;
+	   }
+ 
+	   
+	   // Check if the street/locality is not empty
+	   if (locality === "") {
+           document.getElementById("errMsgLocality").innerHTML = "Please enter your locality"
+		   return false;
+	   }
+
+	   // Check if the city is not empty
+	   if (city === "") {
+		   document.getElementById("errMsgCity").innerHTML = "Please enter your city"
+		   return false;
+	   }
+ 
+	   // Check if the state is not empty
+	   if (state === "") {
+           document.getElementById("errMsgState").innerHTML = "Please enter your State"
+		   return false;
+	   }
+	   
+	   // Check if the postal code/PIN is not empty and is a valid number
+	   if (pincode === "" || isNaN(pincode)) {
+           document.getElementById("errMsgPincode").innerHTML = "Please enter your ZIP Code"
+		   return false;
+	   }
+
+	   // Check if the mobile number is a valid number with at least 10 digits
+	   if (isNaN(mobileNumber) || mobileNumber.length < 10) {
+		   document.getElementById("errMsgMobileNumber").innerHTML = "Please enter valid Mobile Number"
+		   return false;
+	   }
+ 
+	   return true;
+   }
+ </script>
+
+
+<script>
+	function proceedToPayment(){
+        event.preventDefault()
+		var totalAfterDiscount =  document.getElementById('totalVal').value
+		if(totalAfterDiscount){
+			document.getElementById('totalAmountAfterDiscount').value = totalAfterDiscount
+		}
+  $.ajax({
+    url: "/place-order",
+    method: 'POST',
+    data: $('#payment-method-form').serialize(),
+    success: (response) => {
+	console.log(response)
+		if (response.error) {
+        console.log(response,'error');
+      } else if (response.codStatus == true) {
+		var order = document.getElementById("toast-order");
+        order.classList.add("show");
+        order.innerHTML = '<i class="fas fa-check-circle"></i>  Order Placed.';
+        setTimeout(function(){
+       	 order.classList.remove("show");
+   		}, 3000);
+		   window.location = `http://localhost:3000/view-orders`
+      }
+	  else if (response.walletstatus == false) {
+		var order = document.getElementById("toast-order");
+        order.classList.add("show");
+        order.innerHTML = '<i class="fa-solid fa-wallet"></i> Low Wallet Balance.';
+        setTimeout(function(){
+       	 order.classList.remove("show");
+   		}, 3000);
+      }
+	  else if (response.orderStatus == true) {
+		var order = document.getElementById("toast-order");
+        order.classList.add("show");
+        order.innerHTML = '<i class="fas fa-check-circle"></i>  Order Placed.';
+        setTimeout(function(){
+       	 order.classList.remove("show");
+   		}, 3000);
+		   window.location = `http://localhost:3000/view-orders`
+      }
+	  else if((response.orderStatus == false)){
+		var order = document.getElementById("toast-order");
+        order.classList.add("show");
+        order.innerHTML = '<i class="fas fa-ban"></i>'+ response.message;
+        setTimeout(function(){
+       	 order.classList.remove("show");
+   		}, 3000);
+	  }
+	  else {
+        try { 
+			razorpay(response)
+        } catch (error) {
+			console.log(error.message)
+        //   Swal.fire({
+        //     title: 'Error!',
+        //     text: error.message,    
+        //     icon: 'error',
+        //     timer: 5000
+        //   })
+        }
+      } 
+	  
+	}
+})
+	}
+
+
+	  function verifypayment(payment, order,paymentId) {
+		console.log('#########',payment, order, paymentId,'*****************');
+		$.ajax({
+		  url: '/verifyPayment',
+		  method: 'post',
+		  data: {
+			payment,
+			order,
+			paymentId
+		  },
+		   
+		  success: (response) => {
+			if (response.status) {
+				 window.location = `http://localhost:3000/view-orders`
+			} else {
+	
+			}
+	
+		  }
+		})
+	  }
+	
+	  function paymentFailed(order) {
+		$.ajax({
+		  url: '/paymentFailed',
+		  method: 'post',
+		  data: {
+			order,
+		  },
+		   
+		  success: (response) => {
+			if (response.status) { 
+				window.location = `http://localhost:3000/view-orders`
+			} else {
+	
+			}
+	
+		  }
+		})
+	  }
+	 </script>
+<script>
+ function razorpay(order){ 
+	console.log(order.id, 'order');
+    console.log(order.amount, 'amount');
+
+            // Create a Razorpay instance with your key
+            var options = {
+                key: "rzp_test_sGllq5cKHJSJut", 
+                amount: order.amount * 100, 
+                currency: "INR",
+                name: "WedLook",
+                description: "Test Transaction",
+                image: "https://example.com/your_logo.png",
+                order_id: order.id, 
+                handler: function (response) { 
+                    // Handle the successful payment response here
+                    console.log("Payment successful: ", response);
+		            verifypayment(response, order)
+                },
+				"modal": {
+				  "ondismiss": function() {
+					console.log('Payment window closed');
+			 		paymentFailed(order);
+		 		 }
+				},
+                prefill: {
+                    name: "Sipsa",
+                    email: "sipsa@example.com",
+                    contact: "9000090000"
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+            const rzp1 = new Razorpay(options);
+   		    rzp1.open();
+ }
+
+ 
+ function applyCoupon(total) { 
+    let couponCode = document.getElementById('couponCode').value
+    $.ajax({
+      url: '/couponVerify/' + couponCode,
+      method: 'GET',
+      success: (response) => {
+        if (response.status == true) {
+
+          $.ajax({
+            url: '/applyCoupon/' + couponCode + "/" + total,
+            method: 'GET',
+            success: (response) => {
+              console.log(response,'---');
+              if (response.status == true) {
+                // document.getElementById('couponErr').style.color = '#19ff11'
+                // document.getElementById('couponErr').innerText = "Coupon Applied SuccessFully"
+               // document.getElementById('subTotal').innerText = total - response.discountAmount
+                document.getElementById('total').innerText = '₹' + Math.floor(total - response.discountAmount)
+                document.getElementById('totalVal').value = Math.floor(total - response.discountAmount)
+                document.getElementById('couponOffer').innerText = response.discount + '%'
+                document.getElementById('discountPercentage').value = response.discount
+                document.getElementById('discountAmount').value = Math.ceil(response.discountAmount)
+console.log(Math.floor(total - response.discountAmount))
+var list = document.getElementById("toast-coupon");
+    list.classList.add("show");
+    if(response === true) {
+      list.innerHTML = '<i class="fa-solid fa-tag"></i> Coupon Applied';
+    }
+    setTimeout(function(){
+      list.classList.remove("show");
+    },3000);
+
+              } else {
+                document.getElementById('couponErr').style.color = "#ff0707" 
+                document.getElementById('couponErr').innerText = response.message
+              }
+
+            }
+          })
+        } else {
+          document.getElementById('couponErr').style.color = "#ff0707"
+          document.getElementById('couponErr').innerText = response.message
+
+          setTimeout(function() {
+            location.reload()
+          }, 5000)
+        }
+
+      }
+    })
+  }
+
+
+</script>
+
+ 
+<!--include Footer-->
+<%- include('../partial/_userFooter')%>
+<!--include /Footer-->

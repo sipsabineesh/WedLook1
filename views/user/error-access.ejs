@@ -1,0 +1,41 @@
+  <!--include Header-->
+  <%- include('../partial/_userHeader')%>
+  <!--include /Header-->
+  <style>
+    .section-border {
+            max-width: 1200px;
+            min-height: 70vh;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color:#4c4a4a
+        }
+        .error-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .error-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #464242;
+        }
+
+        .contact-admin {
+            font-size: 18px;
+            color: #333;
+        }
+  </style>
+  <div class="section-border">
+  <div class="error-container">
+    <p class="error-message">Something went wrong.</p>
+    <p class="contact-admin">Please contact the admin for assistance.</p>
+  </div>
+</div>
+ <!--include Footer-->
+ <%- include('../partial/_userFooter')%>
+ <!--include /Footer--> 
