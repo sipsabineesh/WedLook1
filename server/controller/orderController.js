@@ -261,7 +261,7 @@ Address.updateOne(
         const checkStock = await stockHelper.checkStock(userId)
         if(checkStock){
           const carttotal = await orderHelper.getCartTotal(userId) 
-          if(carttotal === data.totalAmountAfterDiscount){
+          if(carttotal == data.totalAmountAfterDiscount){
             if(req.body.paymentMethod === "cod"){
               const updatedStock = await stockHelper.updateStock(userId)
               const response = await orderHelper.placeOrder(req.body,user)
@@ -275,7 +275,6 @@ Address.updateOne(
             }
             else{
               const response = await orderHelper.placeOrder(req.body,user);
-          console.log("RSPNSE wallet: "+response)                  
               const updatedStock = await stockHelper.updateStock(userId)
               res.json({ orderStatus: true, message: "order placed successfully" });
               const updatedUser = await User.findByIdAndUpdate(userId, { $unset: { cart: 1 } }, { new: true }); 

@@ -11,6 +11,7 @@ const app =  express()
 dotenv.config({path :'config.env'})
 
 const PORT = process.env.PORT || 8080
+const baseUrl = process.env.BASE_URL;
 //log requests
 app.use(morgan('tiny'))
 

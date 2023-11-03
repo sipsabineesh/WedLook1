@@ -402,7 +402,7 @@ window.addEventListener('click', (event) => {
 
 function setAddress(addressId){
  var  request = {
-    "url":`http://localhost:3000/set-address/${addressId}`,
+    "url":`/set-address/${addressId}`,
     "method":'PUT'
   }
 
@@ -527,7 +527,7 @@ function addAdress(){
         setTimeout(function(){
        	 order.classList.remove("show");
    		}, 3000);
-		   window.location = `http://localhost:3000/view-orders`
+		   window.location = `/view-orders`
       }
 	  else if (response.walletstatus == false) {
 		var order = document.getElementById("toast-order");
@@ -544,7 +544,7 @@ function addAdress(){
         setTimeout(function(){
        	 order.classList.remove("show");
    		}, 3000);
-		   window.location = `http://localhost:3000/view-orders`
+		   window.location = `/view-orders`
       }
 	  else if((response.orderStatus == false)){
 		var order = document.getElementById("toast-order");
@@ -586,7 +586,7 @@ function addAdress(){
 		   
 		  success: (response) => {
 			if (response.status) {
-				 window.location = `http://localhost:3000/view-orders`
+				 window.location = `/view-orders`
 			} else {
 	
 			}
@@ -605,7 +605,7 @@ function addAdress(){
 		   
 		  success: (response) => {
 			if (response.status) { 
-				window.location = `http://localhost:3000/view-orders`
+				window.location = `/view-orders`
 			} else {
 	
 			}

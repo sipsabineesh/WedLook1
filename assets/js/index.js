@@ -12,7 +12,7 @@ $('#update_user').submit(function(event){
     data[n['name']] = n['value']
    })
    var  request = {
-        "url":`http://localhost:3000/api/users/${data.id}`,
+        "url":`/api/users/${data.id}`,
         "method":'PUT',
         "data":data
       }
@@ -27,7 +27,7 @@ if(window.location.pathname == '/'){
     $ondelete.click(function(){
         var id =$(this).attr("data-id")
         var  request = {
-            "url":`http://localhost:3000/api/users/${id}`,
+            "url":`/api/users/${id}`,
             "method":'DELETE'
           }     
         if(confirm("Do you really want to delete this record?"))
@@ -51,9 +51,9 @@ $('#forgot-password').click(function(event){
     else{
            $.ajax({
             method: "POST",
-            url: `http://localhost:3000/forgot-password/${email}`,
+            url: `/forgot-password/${email}`,
             success: function(response){ 
-                window.location ="http://localhost:3000/forgot-password?userEmail="+response.email;
+                window.location ="/forgot-password?userEmail="+response.email;
             },
             error: function(request,status,errorThrown) {
                 $('#errMsg').text("Email not registered!Please Signup")
@@ -81,20 +81,20 @@ $('#reset-password').submit(function(event){
     var email = $('input[name="emailHidden"]').val();
     var pswd = $('input[name="password"]').val();
     var  request = {
-         "url":`http://localhost:3000/change-password/${email}/${pswd}`, 
+         "url":`/change-password/${email}/${pswd}`, 
          "method":'POST'
        }
  
      $.ajax(request).done(function(response){
          alert("Password Updated Successfully")
-         window.location = "http://localhost:3000/login"
+         window.location = "/login"
      })
  })
 
  $('.update-category').click(function(event){
     event.preventDefault()
     var id = $(this).attr( "id" )
-    window.location = `http://localhost:3000/admin/update-category/${id}`
+    window.location = `/admin/update-category/${id}`
  })
 
  $('#update-category').submit(function(event){  
@@ -105,7 +105,7 @@ $('#reset-password').submit(function(event){
      data[n['name']] = n['value']
     })
     var  request = {
-         "url":`http://localhost:3000/admin/update-category/${data.id}`,
+         "url":`/admin/update-category/${data.id}`,
          "method":'PUT',
          "data":data
        }
@@ -119,7 +119,7 @@ $('#reset-password').submit(function(event){
     event.preventDefault()
     var id = $(this).attr( "data-id" )
     var  request = {
-        "url":`http://localhost:3000/admin/delete-category/${id}`,
+        "url":`/admin/delete-category/${id}`,
         "method":'DELETE'
       }     
     if(confirm("Do you really want to delete this record?"))
@@ -136,7 +136,7 @@ $('#reset-password').submit(function(event){
  $('.update-product').click(function(event){
     event.preventDefault()
     var id = $(this).attr( "id" )
-    window.location = `http://localhost:3000/admin/update-product/${id}`
+    window.location = `/admin/update-product/${id}`
  })
 
 
@@ -149,7 +149,7 @@ $('#reset-password').submit(function(event){
      data[n['name']] = n['value']
     })
     var  request = {
-         "url":`http://localhost:3000/admin/update-product/${data.id}`,
+         "url":`/admin/update-product/${data.id}`,
          "method":'PUT',
          "data":data
        }
@@ -164,7 +164,7 @@ $('#reset-password').submit(function(event){
     event.preventDefault()
     var id = $(this).attr( "data-id" )
     var  request = {
-        "url":`http://localhost:3000/admin/delete-product/${id}`,
+        "url":`/admin/delete-product/${id}`,
         "method":'DELETE'
       }     
     if(confirm("Do you really want to delete this record?"))
@@ -187,7 +187,7 @@ $('#reset-password').submit(function(event){
       msg.classList.remove("show");
     }, 3000);
     var  request = {
-        "url":`http://localhost:3000/admin/block-unblock-user/${id}/${action}`,
+        "url":`/admin/block-unblock-user/${id}/${action}`,
         "method":'PUT'
       }     
         $.ajax(request).done(function(response){
@@ -211,7 +211,7 @@ $('#reset-password').submit(function(event){
       msg.classList.remove("show");
     }, 3000);
     var  request = {
-        "url":`http://localhost:3000/admin/block-unblock-user/${id}/${action}`,
+        "url":`/admin/block-unblock-user/${id}/${action}`,
         "method":'PUT'
       }     
         $.ajax(request).done(function(response){
@@ -228,11 +228,11 @@ $('#reset-password').submit(function(event){
  $('.product-card').click(function(event){
   var id = $(this).attr( "id" )
   var  request = {
-      "url":`http://localhost:3000/view-product-details/${id}`,
+      "url":`/view-product-details/${id}`,
       "method":'GET'
     }     
       $.ajax(request).done(function(response){
-       window.location =`http://localhost:3000/view-product-details/${id}`
+       window.location =`/view-product-details/${id}`
        })
 })
  
@@ -241,7 +241,7 @@ $('.add-to-item').click(function(event){
   // $(this).hide()
   
    $.ajax({
-    url:`http://localhost:3000/add-to-cart/${prodId}`,
+    url:`/add-to-cart/${prodId}`,
     method: 'POST',
     success: (response) => {
        var cart = document.getElementById("toast-cart");
@@ -274,7 +274,7 @@ $('.add-to-item').click(function(event){
   //var url = `http://localhost:3000/add-to-wishlist/${proId}`
 
   var  request = {
-    "url":`http://localhost:3000/add-to-wishlist/${proId}`,
+    "url":`/add-to-wishlist/${proId}`,
     "method":'PUT'
   }
 
@@ -304,7 +304,7 @@ $('#address-form').submit(function(event){
   })
  
   var  request = {
-       "url":`http://localhost:3000/add-address/${data.user}`,
+       "url":`/add-address/${data.user}`,
        "method":'POST',
        "data":data
      }
@@ -335,7 +335,7 @@ $('#edit-address').submit(function(event){
    data[n['name']] = n['value']
   })
   var  request = {
-       "url":`http://localhost:3000/edit-address/${data.id}`,
+       "url":`/edit-address/${data.id}`,
        "method":'PUT',
        "data":data
      }

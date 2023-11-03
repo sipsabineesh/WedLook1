@@ -193,7 +193,7 @@
         const currentValue = parseInt(inputElement.value);
         const qty = currentValue + 1;
         $.ajax({
-    url:`http://localhost:3000/increment-cart-quantity/${prodId}/${qty}`,
+    url:`/increment-cart-quantity/${prodId}/${qty}`,
     method: 'POST',
     success: (response) => {
         if(response === "Out Of Stock"){
@@ -219,7 +219,7 @@
         if (currentValue > 1) {
             inputElement.value = currentValue - 1;
             $.ajax({
-    url:`http://localhost:3000/decrement-cart-quantity/${prodId}`,
+    url:`/decrement-cart-quantity/${prodId}`,
     method: 'POST',
     success: (response) => {
         document.getElementById('cart-total-price').innerHTML = `${response.TotalPrice}`;
