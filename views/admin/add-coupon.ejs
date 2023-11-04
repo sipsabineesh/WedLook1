@@ -4,10 +4,11 @@
 <!--Main Section-->
 <main id="site-main">
     <div class="container">
+      <div id="toast"></div>
       <div class="col-md-12">
         <div class="box-nav d-flex-justify-between">
           <div class="filter">
-                <a href="/admin/couponList"><i class=" fas fa-angle-double-left"></i>All Coupons</a>
+                <a href="/admin/coupon-list"><i class=" fas fa-angle-double-left"></i>All Coupons</a>
           </div>
         </div>
         <div class="form-title text-center">
@@ -79,7 +80,7 @@
 
 
 <script>
- function validatorCoupon(){ alert("validate")
+ function validatorCoupon(){
 const couponName = document.getElementById('couponName')
 const validity = document.getElementById('validity')
 const minAmount = document.getElementById('minAmount')
@@ -164,32 +165,40 @@ function submit(coupon, validity, minAmount, minDiscountPercentage, maxDiscount,
          maxDiscount : maxDiscount,
          description : description
      },
-     success:(response)=>{
-       console.log(response.status);
-         if(response.status){
-           Swal.fire({
-                 icon: 'success',
-                 title: 'Coupon Added Successfully!',
-                 showConfirmButton: false,
-                 timer: 5000
-             }).then(() => {
-                 location.href = '/admin/couponList';
-             });
-         }else{
-           Swal.fire({
-                 icon: 'error',
-                 title: 'Oops...',
-                 text: 'Coupon Code already exists!',
-                 timer: 5000
-             });
-         }
-         location.href = '/admin/couponList';
+     success:(response)=>{ 
+      //  console.log(response.status);
+      //    if(response){ 
+          //  Swal.fire({
+          //        icon: 'success',
+          //        title: 'Coupon Added Successfully!',
+          //        showConfirmButton: false,
+          //        timer: 5000
+          //    }).then(() => {
+          //        location.href = '/admin/coupon-list';
+          //    });
+  //         var coupon = document.getElementById("toast");
+  //         coupon.classList.add("show");
+  //         coupon.innerHTML = '<i class="fa-solid fa-address-book"></i>Coupon Added';
+  //      setTimeout(function(){
+  //       coupon.classList.remove("show");
+  //  }, 3000);
+   location.href = '/admin/coupon-list';
+   
+        //  }else{
+        //    Swal.fire({
+        //          icon: 'error',
+        //          title: 'Oops...',
+        //          text: 'Coupon Code already exists!',
+        //          timer: 5000
+        //      });
+        //  }
+        //  location.href = '/admin/coupon-list';
      }
  })
 }
 
 
-function generateCoupon() { alert('generate coupun fn')
+function generateCoupon() {
  $.ajax({
    url: '/admin/generate-coupon-code',
    method: 'GET',

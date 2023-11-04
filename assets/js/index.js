@@ -281,7 +281,7 @@ $('.add-to-item').click(function(event){
 $.ajax(request).done(function(response){
      var list = document.getElementById("toast");
     list.classList.add("show");
-    if(response === true) {  alert("ADDED")
+    if(response === true) {  
       list.innerHTML = "Added to WishList";
     //  heart.classList.add("heart-active");
     }

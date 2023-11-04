@@ -30,11 +30,10 @@ const addCoupon =  (req, res) => {
           };
           console.log("COUPON DATA")
           console.log(data)
-          couponHelper.addCoupon(data).then((response) => {
-            console.log("RESPONSE IN COUPON CONTROLLER")
-            console.log(response)
-            res.json(response);
-          });
+          couponHelper.addCoupon(data)
+          
+            res.json({"response":"success"});
+         
         
     } catch (error) {
         console.log(error.message);
