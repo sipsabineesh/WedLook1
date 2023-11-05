@@ -142,10 +142,10 @@ exports.loadCheckOut=async (req,res) => {
             return
         }
         console.log("req.body.isActive: "+req.body.isActive)
-        if(req.body.isActive == "on") 
+        // if(req.body.isActive == "on") 
           isActive = true
-        else
-          isActive = false
+        // else
+        //   isActive = false
 const addresses = {
                     name:req.body.name,
                     email:req.body.email,
@@ -261,7 +261,7 @@ Address.updateOne(
         const checkStock = await stockHelper.checkStock(userId)
         if(checkStock){
           const carttotal = await orderHelper.getCartTotal(userId) 
-          if(carttotal == data.totalAmountAfterDiscount){
+          // if(carttotal == data.totalAmountAfterDiscount){
             if(req.body.paymentMethod === "cod"){
               const updatedStock = await stockHelper.updateStock(userId)
               const response = await orderHelper.placeOrder(req.body,user)
@@ -290,11 +290,11 @@ Address.updateOne(
           else{
             res.json({ status: 'OrderFailed' });
           }
-          }
-          else
-          {
-            res.json({ orderStatus: false, message: "Difference in Cart and CheckOut Total" });
-          }
+          // }
+          // else
+          // {
+          //   res.json({ orderStatus: false, message: "Difference in Cart and CheckOut Total" });
+          // }
            
         }
         else{

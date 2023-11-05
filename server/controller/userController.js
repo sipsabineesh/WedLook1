@@ -10,12 +10,12 @@ const secret = process.env.JWT_SECRET;
 //create and save new user
 exports.create=(req,res) => { 
     //validate request
-    const errors= validationResult(req);
-    if(!errors.isEmpty()){
-      var errMsg= errors.mapped();
-      var inputData = matchedData(req);  
-     }else{
-        var inputData = matchedData(req);  
+    // const errors= validationResult(req);
+    // if(!errors.isEmpty()){
+    //   var errMsg= errors.mapped();
+    //   var inputData = matchedData(req);  
+    //  }else{
+        // var inputData = matchedData(req);  
     //    // insert query will be written here
     //new user
     const user = new User({
@@ -46,7 +46,7 @@ exports.create=(req,res) => {
     })
   })
  })
- }
+//  }
 
 }
 

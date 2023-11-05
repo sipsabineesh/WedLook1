@@ -2,6 +2,30 @@
 <%- include('../partial/_userHeader')%>
 <!--include /Header -->
 <style>
+	  .simmer-offer {
+    background-color: #f7b731; /* Set the background color */
+    color: #fff; /* Set the text color */
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    animation: simmer 2s infinite alternate; /* CSS animation for simmer effect */
+  }
+
+  /* Keyframes for the simmer effect */
+  @keyframes simmer {
+    0% {
+      background-color: #f7b731;
+    }
+    50% {
+      background-color: #ff5733; /* Change to a different color */
+    }
+    100% {
+      background-color: #f7b731;
+    }
+  }
 	.payment-option {
     margin: 10px 0;
 }
@@ -178,7 +202,7 @@
 				<% }); %>
     <% } else { %>
         <!-- Display a message if 'addresses' is null or empty -->
-        <p>No addresses found.</p>
+        <p style="color:red">No address found.Please add your address to place the order</p>
     <% } %>
 	<div class="col-md-12">
 		<button type="button" id="add-address" class="btns">Add New Address</button>
@@ -211,7 +235,7 @@
 					<input type="hidden" id="finalTotal">
 					Have a coupon?
 					<div class="coupon_area">
-					   <input type="text" name="couponCode" id="couponCode">
+					   <input type="text" name="couponCode" id="couponCode"> <div class="simmer-offer">Coupon Code: 7487049329</div>
 					   <a class="btns btn-dark" href="#"  onclick="applyCoupon('<%=totalPrice%>')" >Apply</a>
 					   <span id="couponErr"></span>
 					</div>

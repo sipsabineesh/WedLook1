@@ -316,13 +316,10 @@ $('#address-form').submit(function(event){
        setTimeout(function(){
        address.classList.remove("show");
    }, 3000);
+   location.reload();
    })
-	location.reload();
-
 })
  
-
-
 // $('#add-address').click(function(event){ 
 //   $('#address-form ').style.visibility = 'visible'
 // })

@@ -26,11 +26,6 @@
                       </div>
                     </div>
                     <div class="form-group row mt-3">
-                      <label for="category-description" class="col-sm-2 col-form-label">Description</label>
-                      <div class="col-md-4">
-                        <textarea placeholder="" class="form-control" style="width:100%; height:120px" id="categoryDescription" name="categoryDescription"><%= category.categoryDescription%></textarea>
-                      <span id="descriptionError"></span>
-                      </div>
                       <label for="categoryImage" class="col-sm-2 col-form-label">Image</label>
                       <div class="col-md-4">
                         <div class="form-group">
@@ -38,6 +33,22 @@
                           <span id="imageError"></span>
                       </div>
                    </div>
+                      <label for="category-description" class="col-sm-2 col-form-label">Description</label>
+                      <div class="col-md-4">
+                        <textarea placeholder="" class="form-control" style="width:100%; height:120px" id="categoryDescription" name="categoryDescription"><%= category.categoryDescription%></textarea>
+                      <span id="descriptionError"></span>
+                      </div>
+                  
+                   <div class="form-group">
+                    <div id="existingImages">
+                      <% for (const image of category.categoryImage) { %>
+                        <img src="/img/product-images/<%= image %>" alt="Category Image" class="existing-image"  width="100" height="100">
+                        <span class="" data-image="<%= image %>">
+                          <i class="fa fa-trash delete-icon"></i> 
+                        </span>
+                      <% } %>
+                    </div>
+                  </div>
                     </div>
 
                     <div class="form-group row mt-3">
