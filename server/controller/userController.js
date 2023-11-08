@@ -269,7 +269,7 @@ exports.updateOTP=(async(req,res) => {
          else{
             try {
                 sendEmail(email,message)
-                res.render('user/otp-entry',{otp:otp})
+                res.render('user/otp-entry',{email:email,otp:otp})
             } catch (error) {
             }
         }
@@ -280,16 +280,19 @@ exports.updateOTP=(async(req,res) => {
 
    })
 
-   exports.verifyLoginOTP=(async(req,res) => {
+   exports.verifyLoginOTP=(async (req,res) => {
     try {
     const user = await User.findOne({ loginOtp: req.body.otp })
-    .then(user => {
+    .then(async(user) => {
         if(!user){
             res.status(404).send({message:`Error Retreving Data`})
         }
          else{
             try{
+                const user = await User.findOne({ email: req.body.email});
                 bannerHelper.getBanner().then((response)=> {
+                    req.session.loggedIn = true
+                    req.session.user = user
                 res.render('user/home',{user,banner:response})
                 })
             }
